@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  // Paths are resolved from project root (CWD), not from this file's location
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
