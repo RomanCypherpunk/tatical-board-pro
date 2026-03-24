@@ -84,10 +84,22 @@ export default function reducer(state, action) {
       return { ...state, arrows: [...state.arrows, action.arrow] };
 
     case 'REMOVE_ARROW':
-      return { ...state, arrows: state.arrows.filter((a) => a.id !== action.id) };
+      return {
+        ...state,
+        arrows: state.arrows.filter((a) => a.id !== action.id),
+        ui: { ...state.ui, selectedArrow: state.ui.selectedArrow === action.id ? null : state.ui.selectedArrow },
+      };
+
+    case 'UPDATE_ARROW': {
+      const { arrowId, updates } = action;
+      return {
+        ...state,
+        arrows: state.arrows.map((a) => (a.id === arrowId ? { ...a, ...updates } : a)),
+      };
+    }
 
     case 'CLEAR_ARROWS':
-      return { ...state, arrows: [] };
+      return { ...state, arrows: [], ui: { ...state.ui, selectedArrow: null } };
 
     case 'FLIP_SIDES': {
       const flipPlayers = (players) =>
@@ -119,6 +131,23 @@ export default function reducer(state, action) {
         teams: {
           home: { ...state.teams.home, players: resetHome },
           away: { ...state.teams.away, players: resetAway },
+        },
+      };
+    }
+
+    case 'REORDER_PLAYER': {
+      const { teamId, playerId, direction } = action;
+      const players = [...state.teams[teamId].players];
+      const idx = players.findIndex((p) => p.id === playerId);
+      if (idx === -1) return state;
+      const newIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (newIdx < 0 || newIdx >= players.length) return state;
+      [players[idx], players[newIdx]] = [players[newIdx], players[idx]];
+      return {
+        ...state,
+        teams: {
+          ...state.teams,
+          [teamId]: { ...state.teams[teamId], players },
         },
       };
     }

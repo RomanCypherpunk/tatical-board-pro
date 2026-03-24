@@ -1,8 +1,10 @@
 import { useState, useRef, useCallback } from 'react';
 import { pctToSvg, FL, FT, FW, FH, FR, FB } from './constants';
 import { getShirtFill } from './ShirtPatternDefs';
+import DIRECTIONS from '../../data/directions';
 
 const R = 18; // marker radius
+const DIR_ARROW_LEN = 32; // direction arrow length from center
 
 /**
  * Draggable player circle on the SVG pitch.
@@ -142,6 +144,50 @@ export default function PlayerMarker({
           </text>
         </g>
       )}
+
+      {/* Player name below marker */}
+      <text
+        x={cx}
+        y={cy + R + 10}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={8}
+        fontWeight="700"
+        fontFamily="Inter, sans-serif"
+        fill="white"
+        stroke="rgba(0,0,0,0.75)"
+        strokeWidth={2.5}
+        paintOrder="stroke"
+        style={{ pointerEvents: 'none', userSelect: 'none' }}
+      >
+        {player.name.split(' ').pop().slice(0, 8)}
+      </text>
+
+      {/* Direction arrow */}
+      {player.direction && (() => {
+        const dir = DIRECTIONS.find((d) => d.key === player.direction);
+        if (!dir) return null;
+        const startX = cx + dir.dx * (R + 4);
+        const startY = cy + dir.dy * (R + 4);
+        const endX = cx + dir.dx * (R + DIR_ARROW_LEN);
+        const endY = cy + dir.dy * (R + DIR_ARROW_LEN);
+        const markerId = `dir-${player.id}`;
+        return (
+          <g style={{ pointerEvents: 'none' }}>
+            <defs>
+              <marker id={markerId} viewBox="0 0 10 7" refX="10" refY="3.5"
+                markerWidth="7" markerHeight="5" orient="auto-start-reverse">
+                <polygon points="0,0 10,3.5 0,7" fill={fillColor} />
+              </marker>
+            </defs>
+            <line
+              x1={startX} y1={startY} x2={endX} y2={endY}
+              stroke={fillColor} strokeWidth="2.5" opacity="0.85"
+              markerEnd={`url(#${markerId})`}
+            />
+          </g>
+        );
+      })()}
     </g>
   );
 }
