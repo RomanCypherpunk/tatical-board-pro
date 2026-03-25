@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Pencil, ChevronUp, ChevronDown, Star, Shield } from 'lucide-react';
+import { Pencil, ChevronUp, ChevronDown, Star, Shield, Globe } from 'lucide-react';
 import FORMATIONS from '../../data/formations';
 import SHIRT_PATTERNS from '../../data/shirtPatterns';
 
@@ -87,6 +87,15 @@ export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
             ))}
           </div>
         </div>
+
+        {/* Live search button */}
+        <button
+          onClick={() => dispatch({ type: 'SET_UI', updates: { showLiveSearch: teamId } })}
+          className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg bg-accent/15 hover:bg-accent/25 text-accent text-xs font-semibold transition-colors cursor-pointer"
+        >
+          <Globe size={12} />
+          Buscar Escalação Real
+        </button>
 
         {/* Formation dropdown */}
         <div className="flex items-center gap-2">

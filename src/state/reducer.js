@@ -152,6 +152,46 @@ export default function reducer(state, action) {
       };
     }
 
+    case 'LOAD_LIVE_TEAM': {
+      const { teamId, teamData, players: apiPlayers } = action;
+      const isAway = teamId === 'away';
+      const resolvedFormation = FORMATIONS[teamData.formation] ? teamData.formation : '4-3-3';
+      const f = FORMATIONS[resolvedFormation];
+      const idOffset = isAway ? 100 : 0;
+
+      const newPlayers = f.positions.map((pos, i) => ({
+        id: idOffset + i + 1,
+        name: apiPlayers[i]?.name || `Jogador ${i + 1}`,
+        number: apiPlayers[i]?.number || i + 1,
+        position: apiPlayers[i]?.position || pos.pos,
+        role: '',
+        instruction: '',
+        x: pos.x,
+        y: isAway ? 100 - pos.y : pos.y,
+        isCaptain: false,
+        isKeyPlayer: false,
+        colorOverride: null,
+        direction: null,
+      }));
+
+      return {
+        ...state,
+        teams: {
+          ...state.teams,
+          [teamId]: {
+            ...state.teams[teamId],
+            name: teamData.name,
+            shortName: teamData.shortName,
+            primaryColor: teamData.primaryColor,
+            secondaryColor: teamData.secondaryColor,
+            numberColor: teamData.numberColor,
+            formation: resolvedFormation,
+            players: newPlayers,
+          },
+        },
+      };
+    }
+
     case 'LOAD_STATE':
       return action.state;
 

@@ -61,6 +61,7 @@ export default function initialState() {
       arrowDrawing: null,
       selectedArrow: null,
       showPlayerEditor: false,
+      showLiveSearch: null,
     },
   };
 }

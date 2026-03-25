@@ -8,6 +8,7 @@ import Header from './components/Header';
 import PitchCanvas from './components/Pitch/PitchCanvas';
 import TeamPanel from './components/Panels/TeamPanel';
 import PlayerEditorModal from './components/Panels/PlayerEditorModal';
+import LiveTeamSearch from './components/Panels/LiveTeamSearch';
 import BottomToolbar from './components/Toolbar/BottomToolbar';
 
 export default function App() {
@@ -53,7 +54,7 @@ export default function App() {
   useEffect(() => {
     const handleKey = (e) => {
       if (e.key === 'Escape') {
-        dispatch({ type: 'SET_UI', updates: { arrowDrawing: null, arrowMode: null, eraserMode: false, selectedArrow: null, showPlayerEditor: false } });
+        dispatch({ type: 'SET_UI', updates: { arrowDrawing: null, arrowMode: null, eraserMode: false, selectedArrow: null, showPlayerEditor: false, showLiveSearch: null } });
       }
       if ((e.key === 'Delete' || e.key === 'Backspace') && ui.selectedArrow) {
         e.preventDefault();
@@ -151,6 +152,15 @@ export default function App() {
           teamId={ui.selectedPlayer.teamId}
           dispatch={dispatch}
           onClose={() => dispatch({ type: 'SET_UI', updates: { showPlayerEditor: false } })}
+        />
+      )}
+
+      {/* ── Live Team Search Modal ── */}
+      {ui.showLiveSearch && (
+        <LiveTeamSearch
+          teamId={ui.showLiveSearch}
+          dispatch={dispatch}
+          onClose={() => dispatch({ type: 'SET_UI', updates: { showLiveSearch: null } })}
         />
       )}
     </div>
