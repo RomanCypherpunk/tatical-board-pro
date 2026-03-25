@@ -88,9 +88,9 @@ export default function LiveTeamSearch({ teamId, dispatch, onClose }) {
     const teamData = {
       name: lineup.team.name,
       shortName: localTeam?.shortName || lineup.team.shortName,
-      primaryColor: localTeam?.primaryColor || lineup.team.primaryColor,
-      secondaryColor: localTeam?.secondaryColor || lineup.team.secondaryColor,
-      numberColor: localTeam?.numberColor || lineup.team.numberColor,
+      primaryColor: localTeam?.primaryColor || lineup.team.primaryColor || '#E63946',
+      secondaryColor: localTeam?.secondaryColor || lineup.team.secondaryColor || '#FFFFFF',
+      numberColor: localTeam?.numberColor || lineup.team.numberColor || '#FFFFFF',
       formation: lineup.team.formation,
     };
 
@@ -229,17 +229,23 @@ export default function LiveTeamSearch({ teamId, dispatch, onClose }) {
               {/* Lineup data */}
               {lineup && (
                 <div className="space-y-3">
-                  {/* Match info */}
-                  <div className="bg-white/5 rounded-xl px-3 py-2 text-xs text-txt-secondary">
-                    <span className="font-semibold text-txt-primary">
-                      {lineup.fixture.home} {lineup.fixture.score} {lineup.fixture.away}
-                    </span>
-                    {lineup.fixture.date && (
-                      <span className="ml-2">
-                        ({new Date(lineup.fixture.date + 'T00:00:00').toLocaleDateString('pt-BR')})
+                  {/* Match info (if available) */}
+                  {lineup.fixture ? (
+                    <div className="bg-white/5 rounded-xl px-3 py-2 text-xs text-txt-secondary">
+                      <span className="font-semibold text-txt-primary">
+                        {lineup.fixture.home} {lineup.fixture.score} {lineup.fixture.away}
                       </span>
-                    )}
-                  </div>
+                      {lineup.fixture.date && (
+                        <span className="ml-2">
+                          ({new Date(lineup.fixture.date + 'T00:00:00').toLocaleDateString('pt-BR')})
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="bg-white/5 rounded-xl px-3 py-2 text-xs text-txt-secondary">
+                      Elenco atual da temporada
+                    </div>
+                  )}
 
                   {/* Formation */}
                   <div className="text-xs text-txt-secondary">
@@ -253,8 +259,8 @@ export default function LiveTeamSearch({ teamId, dispatch, onClose }) {
                         <span
                           className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0"
                           style={{
-                            backgroundColor: lineup.team.primaryColor,
-                            color: lineup.team.numberColor,
+                            backgroundColor: lineup.team.primaryColor || '#3B82F6',
+                            color: lineup.team.numberColor || '#FFFFFF',
                           }}
                         >
                           {p.number}
