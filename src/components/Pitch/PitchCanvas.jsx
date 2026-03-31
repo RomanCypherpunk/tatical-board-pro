@@ -58,12 +58,24 @@ export default function PitchCanvas({ teams, arrows, ui, dispatch, svgRef }) {
     });
   };
 
+  const openEditor = (teamId, playerId) => {
+    dispatch({
+      type: 'SET_UI',
+      updates: {
+        selectedPlayer: { teamId, id: playerId },
+        selectedTeam: teamId,
+        selectedArrow: null,
+        showPlayerEditor: true,
+      },
+    });
+  };
+
   const cursorStyle = ui.arrowMode ? 'crosshair' : 'default';
   const showAway = ui.showAwayTeam;
 
   return (
     <div
-      className="flex-1 flex items-center justify-center p-2 overflow-hidden"
+      className="flex-1 flex items-center justify-center overflow-hidden p-3 md:p-4"
       style={{ cursor: cursorStyle }}
     >
       <svg
@@ -117,6 +129,7 @@ export default function PitchCanvas({ teams, arrows, ui, dispatch, svgRef }) {
             viewMode={ui.viewMode}
             isSelected={ui.selectedPlayer?.id === player.id && ui.selectedPlayer?.teamId === 'home'}
             onSelect={() => selectPlayer('home', player.id)}
+            onOpenEditor={() => openEditor('home', player.id)}
             onDragEnd={(x, y) =>
               dispatch({ type: 'MOVE_PLAYER', teamId: 'home', playerId: player.id, x, y })
             }
@@ -134,6 +147,7 @@ export default function PitchCanvas({ teams, arrows, ui, dispatch, svgRef }) {
               viewMode={ui.viewMode}
               isSelected={ui.selectedPlayer?.id === player.id && ui.selectedPlayer?.teamId === 'away'}
               onSelect={() => selectPlayer('away', player.id)}
+              onOpenEditor={() => openEditor('away', player.id)}
               onDragEnd={(x, y) =>
                 dispatch({ type: 'MOVE_PLAYER', teamId: 'away', playerId: player.id, x, y })
               }

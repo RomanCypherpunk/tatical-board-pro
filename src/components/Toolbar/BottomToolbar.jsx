@@ -1,22 +1,25 @@
 import {
-  Hash,
-  Type,
-  MapPin,
   ArrowRight,
-  Trash2,
   FlipHorizontal,
-  RotateCcw,
+  Hash,
+  Image as ImageIcon,
+  MapPin,
   MousePointer,
+  Pencil,
+  RotateCcw,
+  Trash2,
+  Type,
   Users,
   X,
 } from 'lucide-react';
-import PITCH_THEMES from '../../data/pitchThemes';
 import ARROW_STYLES from '../../data/arrowStyles';
+import PITCH_THEMES from '../../data/pitchThemes';
 
 const VIEW_MODES = [
-  { mode: 'number', Icon: Hash, label: 'Nº' },
+  { mode: 'number', Icon: Hash, label: 'N' },
   { mode: 'name', Icon: Type, label: 'Nome' },
   { mode: 'position', Icon: MapPin, label: 'Pos' },
+  { mode: 'photo', Icon: ImageIcon, label: 'Foto' },
 ];
 
 const THEME_KEYS = Object.keys(PITCH_THEMES);
@@ -28,42 +31,42 @@ const ARROW_TYPES = Object.entries(ARROW_STYLES).map(([type, style]) => ({
 }));
 
 /**
- * Bottom toolbar with view mode, pitch theme, arrow tools, and action buttons.
+ * Bottom toolbar with player view modes, pitch theme, arrows and actions.
  */
 export default function BottomToolbar({ ui, dispatch }) {
   const setUI = (updates) => dispatch({ type: 'SET_UI', updates });
 
   return (
-    <div className="glass flex-shrink-0 px-3 py-2 flex items-center gap-2 flex-wrap justify-center z-10 border-t border-white/[0.08]">
-      {/* ── View Mode ── */}
-      <div className="flex items-center gap-0.5 rounded-lg p-0.5 bg-white/5">
+    <div className="glass z-10 flex flex-shrink-0 flex-wrap items-center justify-center gap-2 border-t border-white/[0.08] px-3 py-2">
+      <div className="flex items-center gap-0.5 rounded-xl bg-white/5 p-0.5">
         {VIEW_MODES.map(({ mode, Icon, label }) => (
           <button
             key={mode}
-            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-md transition-all duration-200 cursor-pointer"
+            className="flex cursor-pointer items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs transition-all duration-200"
             style={{
-              background: ui.viewMode === mode ? 'var(--color-accent)' : 'transparent',
-              color: ui.viewMode === mode ? '#fff' : 'var(--color-txt-secondary)',
+              background: ui.viewMode === mode ? 'var(--accent)' : 'transparent',
+              color: ui.viewMode === mode ? '#fff' : 'var(--text-secondary)',
             }}
             onClick={() => setUI({ viewMode: mode })}
           >
-            <Icon size={13} /> {label}
+            <Icon size={13} />
+            {label}
           </button>
         ))}
       </div>
 
       <Divider />
 
-      {/* ── Pitch Theme ── */}
       <div className="flex items-center gap-1">
         {THEME_KEYS.map((key) => (
           <button
             key={key}
-            className="w-6 h-6 rounded-full border-2 transition-all duration-200 cursor-pointer"
+            className="h-6 w-6 cursor-pointer rounded-full border-2 transition-all duration-200"
             title={PITCH_THEMES[key].label}
             style={{
               background: PITCH_THEMES[key].field,
-              borderColor: ui.pitchStyle === key ? 'var(--color-accent)' : 'rgba(255,255,255,0.15)',
+              borderColor:
+                ui.pitchStyle === key ? 'var(--accent)' : 'rgba(255,255,255,0.15)',
               transform: ui.pitchStyle === key ? 'scale(1.2)' : 'scale(1)',
             }}
             onClick={() => setUI({ pitchStyle: key })}
@@ -73,29 +76,26 @@ export default function BottomToolbar({ ui, dispatch }) {
 
       <Divider />
 
-      {/* ── Arrow Tools ── */}
-      <div className="flex items-center gap-0.5 rounded-lg p-0.5 bg-white/5">
-        {/* Pointer (default) */}
+      <div className="flex items-center gap-0.5 rounded-xl bg-white/5 p-0.5">
         <button
-          className="flex items-center gap-1 text-xs px-2 py-1.5 rounded-md transition-all duration-200 cursor-pointer"
+          className="flex cursor-pointer items-center gap-1 rounded-lg px-2 py-1.5 text-xs transition-all duration-200"
           style={{
-            background: !ui.arrowMode ? 'var(--color-accent)' : 'transparent',
-            color: !ui.arrowMode ? '#fff' : 'var(--color-txt-secondary)',
+            background: !ui.arrowMode ? 'var(--accent)' : 'transparent',
+            color: !ui.arrowMode ? '#fff' : 'var(--text-secondary)',
           }}
           onClick={() => setUI({ arrowMode: null, arrowDrawing: null })}
         >
           <MousePointer size={13} />
         </button>
 
-        {/* Arrow type buttons */}
         {ARROW_TYPES.map(({ type, label, color }) => (
           <button
             key={type}
-            className="flex items-center gap-1 text-xs px-2 py-1.5 rounded-md transition-all duration-200 cursor-pointer"
+            className="flex cursor-pointer items-center gap-1 rounded-lg px-2 py-1.5 text-xs transition-all duration-200"
             title={label}
             style={{
               background: ui.arrowMode === type ? 'rgba(255,255,255,0.12)' : 'transparent',
-              color: ui.arrowMode === type ? color : 'var(--color-txt-secondary)',
+              color: ui.arrowMode === type ? color : 'var(--text-secondary)',
             }}
             onClick={() =>
               setUI({
@@ -104,40 +104,65 @@ export default function BottomToolbar({ ui, dispatch }) {
               })
             }
           >
-            <ArrowRight size={13} /> {label}
+            <ArrowRight size={13} />
+            {label}
           </button>
         ))}
       </div>
 
-      {/* Selected arrow actions */}
       {ui.selectedArrow && (
         <>
           <Divider />
           <button
-            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg transition-all cursor-pointer"
+            className="flex cursor-pointer items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs transition-all"
             style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444' }}
             onClick={() => dispatch({ type: 'REMOVE_ARROW', id: ui.selectedArrow })}
           >
-            <X size={13} /> Remover Seta
+            <X size={13} />
+            Remover Seta
+          </button>
+        </>
+      )}
+
+      {ui.selectedPlayer && (
+        <>
+          <Divider />
+          <button
+            className="flex cursor-pointer items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs transition-all"
+            style={{ background: 'rgba(20,201,107,0.14)', color: 'var(--accent)' }}
+            onClick={() => setUI({ showPlayerEditor: true })}
+          >
+            <Pencil size={13} />
+            Editar Jogador
           </button>
         </>
       )}
 
       <Divider />
 
-      {/* ── Actions ── */}
-      <ToolbarButton Icon={Trash2} label="Limpar Setas" onClick={() => dispatch({ type: 'CLEAR_ARROWS' })} />
-      <ToolbarButton Icon={FlipHorizontal} label="Inverter" onClick={() => dispatch({ type: 'FLIP_SIDES' })} />
-      <ToolbarButton Icon={RotateCcw} label="Resetar" onClick={() => dispatch({ type: 'RESET_POSITIONS' })} />
+      <ToolbarButton
+        Icon={Trash2}
+        label="Limpar Setas"
+        onClick={() => dispatch({ type: 'CLEAR_ARROWS' })}
+      />
+      <ToolbarButton
+        Icon={FlipHorizontal}
+        label="Inverter"
+        onClick={() => dispatch({ type: 'FLIP_SIDES' })}
+      />
+      <ToolbarButton
+        Icon={RotateCcw}
+        label="Resetar"
+        onClick={() => dispatch({ type: 'RESET_POSITIONS' })}
+      />
 
       <Divider />
 
-      {/* ── Away Team Toggle ── */}
       <button
-        className="flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg transition-all duration-200 cursor-pointer"
+        className="flex cursor-pointer items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs transition-all duration-200"
         style={{
-          background: ui.showAwayTeam ? 'rgba(59,130,246,0.15)' : 'rgba(255,255,255,0.05)',
-          color: ui.showAwayTeam ? 'var(--color-accent)' : 'var(--color-txt-secondary)',
+          background: ui.showAwayTeam ? 'rgba(20,201,107,0.15)' : 'rgba(255,255,255,0.05)',
+          color: ui.showAwayTeam ? 'var(--accent)' : 'var(--text-secondary)',
         }}
         onClick={() => setUI({ showAwayTeam: !ui.showAwayTeam })}
         title={ui.showAwayTeam ? 'Ocultar Time B' : 'Exibir Time B'}
@@ -150,16 +175,17 @@ export default function BottomToolbar({ ui, dispatch }) {
 }
 
 function Divider() {
-  return <div className="w-px h-5 bg-white/[0.08]" />;
+  return <div className="h-5 w-px bg-white/[0.08]" />;
 }
 
 function ToolbarButton({ Icon, label, onClick }) {
   return (
     <button
-      className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg hover:bg-white/10 transition-all cursor-pointer text-txt-secondary"
+      className="flex cursor-pointer items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs text-txt-secondary transition-all hover:bg-white/10"
       onClick={onClick}
     >
-      <Icon size={13} /> {label}
+      <Icon size={13} />
+      {label}
     </button>
   );
 }

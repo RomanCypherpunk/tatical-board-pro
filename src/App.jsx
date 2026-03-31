@@ -10,6 +10,7 @@ import TeamPanel from './components/Panels/TeamPanel';
 import PlayerEditorModal from './components/Panels/PlayerEditorModal';
 import LiveTeamSearch from './components/Panels/LiveTeamSearch';
 import BottomToolbar from './components/Toolbar/BottomToolbar';
+import { exportPitchRaster } from './utils/exportPitch';
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, null, initialState);
@@ -37,17 +38,10 @@ export default function App() {
     }
   }, [state]);
 
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback(async (format = 'png') => {
     const svgEl = svgRef.current;
     if (!svgEl) return;
-    const svgData = new XMLSerializer().serializeToString(svgEl);
-    const blob = new Blob([svgData], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'tatica.svg';
-    a.click();
-    URL.revokeObjectURL(url);
+    await exportPitchRaster(svgEl, format);
   }, []);
 
   // ── Keyboard shortcuts ──
@@ -73,7 +67,7 @@ export default function App() {
   }, [ui.selectedPlayer, teams]);
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-surface-primary font-body">
+    <div className="app-shell h-screen w-screen flex flex-col overflow-hidden bg-surface-primary font-body">
       <Header onSave={handleSave} onExport={handleExport} />
 
       <div className="flex flex-1 overflow-hidden">

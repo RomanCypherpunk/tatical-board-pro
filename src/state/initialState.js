@@ -11,6 +11,7 @@ export function createTeamPlayers(formation, isAway) {
     id: (isAway ? 100 : 0) + i + 1,
     name: DEFAULT_NAMES[i] || `Jogador ${i + 1}`,
     number: DEFAULT_NUMBERS[i] || i + 1,
+    fotmobId: null,
     position: p.pos,
     role: '',
     instruction: '',

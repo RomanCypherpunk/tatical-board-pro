@@ -10,18 +10,18 @@ export default {
       },
       colors: {
         surface: {
-          primary: '#0F1117',
-          secondary: '#1A1D27',
-          panel: 'rgba(26, 29, 39, 0.88)',
+          primary: '#08120D',
+          secondary: '#101F17',
+          panel: 'rgba(12, 24, 18, 0.86)',
         },
         accent: {
-          DEFAULT: '#3B82F6',
-          hover: '#2563EB',
-          glow: 'rgba(59, 130, 246, 0.35)',
+          DEFAULT: '#14C96B',
+          hover: '#0FAE5C',
+          glow: 'rgba(20, 201, 107, 0.35)',
         },
         txt: {
-          primary: '#F1F3F5',
-          secondary: '#8B92A5',
+          primary: '#F5F7F5',
+          secondary: '#93AB9D',
         },
       },
     },

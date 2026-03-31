@@ -1,67 +1,93 @@
-import { useState, useRef, useEffect } from 'react';
-import { Pencil, ChevronUp, ChevronDown, Star, Shield, Globe } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ChevronDown,
+  ChevronUp,
+  Globe,
+  Pencil,
+  Shield,
+  Star,
+} from 'lucide-react';
 import FORMATIONS from '../../data/formations';
 import SHIRT_PATTERNS from '../../data/shirtPatterns';
 
 const formationKeys = Object.keys(FORMATIONS);
 
 const SELECT_STYLE = {
-  backgroundColor: '#1e2233',
-  color: '#f1f3f5',
+  backgroundColor: '#101F17',
+  color: '#F5F7F5',
   border: '1px solid rgba(255,255,255,0.12)',
 };
 
-const OPTION_STYLE = { backgroundColor: '#1e2233', color: '#f1f3f5' };
+const OPTION_STYLE = {
+  backgroundColor: '#101F17',
+  color: '#F5F7F5',
+};
 
 export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      {/* ── Team Identity + Colors ── */}
-      <div className="p-3 border-b border-white/[0.08] space-y-2.5">
-        {/* Name + Abbreviation */}
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="space-y-3 border-b border-white/[0.08] p-3">
         <div className="flex items-center gap-2">
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+            className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-xs font-bold"
             style={{ background: team.primaryColor, color: team.numberColor }}
           >
-            {team.shortName.slice(0, 2)}
+            {team.shortName.slice(0, 3)}
           </div>
+
           <input
-            className="flex-1 bg-transparent text-sm font-semibold outline-none border-b border-transparent focus:border-accent transition-colors px-1 py-0.5 text-txt-primary"
+            className="flex-1 border-b border-transparent bg-transparent px-1 py-0.5 text-sm font-semibold text-txt-primary outline-none transition-colors focus:border-accent"
             value={team.name}
-            onChange={(e) =>
-              dispatch({ type: 'SET_TEAM_FIELD', teamId, field: 'name', value: e.target.value })
+            onChange={(event) =>
+              dispatch({
+                type: 'SET_TEAM_FIELD',
+                teamId,
+                field: 'name',
+                value: event.target.value,
+              })
             }
-            placeholder="Nome do Time"
+            placeholder="Nome do time"
           />
+
           <input
-            className="w-12 bg-white/5 rounded px-1.5 py-0.5 text-xs text-center outline-none focus:ring-1 focus:ring-accent text-txt-primary"
+            className="w-12 rounded bg-white/5 px-1.5 py-0.5 text-center text-xs text-txt-primary outline-none focus:ring-1 focus:ring-accent"
             value={team.shortName}
             maxLength={4}
-            onChange={(e) =>
-              dispatch({ type: 'SET_TEAM_FIELD', teamId, field: 'shortName', value: e.target.value.toUpperCase() })
+            onChange={(event) =>
+              dispatch({
+                type: 'SET_TEAM_FIELD',
+                teamId,
+                field: 'shortName',
+                value: event.target.value.toUpperCase(),
+              })
             }
-            placeholder="ABR"
+            placeholder="SIG"
           />
         </div>
 
-        {/* Colors + shirt preview */}
         <div className="flex items-center gap-3">
           <ColorPicker
-            label="Primária"
+            label="Primaria"
             value={team.primaryColor}
-            onChange={(v) => dispatch({ type: 'SET_TEAM_FIELD', teamId, field: 'primaryColor', value: v })}
+            onChange={(value) =>
+              dispatch({ type: 'SET_TEAM_FIELD', teamId, field: 'primaryColor', value })
+            }
           />
           <ColorPicker
-            label="Secundária"
+            label="Secundaria"
             value={team.secondaryColor}
-            onChange={(v) => dispatch({ type: 'SET_TEAM_FIELD', teamId, field: 'secondaryColor', value: v })}
+            onChange={(value) =>
+              dispatch({ type: 'SET_TEAM_FIELD', teamId, field: 'secondaryColor', value })
+            }
           />
           <ColorPicker
-            label="Nº/Texto"
+            label="Texto"
             value={team.numberColor}
-            onChange={(v) => dispatch({ type: 'SET_TEAM_FIELD', teamId, field: 'numberColor', value: v })}
+            onChange={(value) =>
+              dispatch({ type: 'SET_TEAM_FIELD', teamId, field: 'numberColor', value })
+            }
           />
+
           <ShirtPreview
             pattern={team.pattern}
             primary={team.primaryColor}
@@ -70,9 +96,8 @@ export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
           />
         </div>
 
-        {/* Pattern swatches */}
         <div>
-          <label className="text-[10px] text-txt-secondary block mb-1.5">Camisa</label>
+          <label className="mb-1.5 block text-[10px] text-txt-secondary">Camisa</label>
           <div className="flex flex-wrap gap-1.5">
             {SHIRT_PATTERNS.map(({ key, label }) => (
               <PatternSwatch
@@ -82,44 +107,57 @@ export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
                 primary={team.primaryColor}
                 secondary={team.secondaryColor}
                 selected={team.pattern === key}
-                onClick={() => dispatch({ type: 'SET_TEAM_FIELD', teamId, field: 'pattern', value: key })}
+                onClick={() =>
+                  dispatch({
+                    type: 'SET_TEAM_FIELD',
+                    teamId,
+                    field: 'pattern',
+                    value: key,
+                  })
+                }
               />
             ))}
           </div>
         </div>
 
-        {/* Live search button */}
         <button
           onClick={() => dispatch({ type: 'SET_UI', updates: { showLiveSearch: teamId } })}
-          className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg bg-accent/15 hover:bg-accent/25 text-accent text-xs font-semibold transition-colors cursor-pointer"
+          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-accent/15 py-2 text-xs font-semibold text-accent transition-colors hover:bg-accent/25"
         >
           <Globe size={12} />
-          Buscar Escalação Real
+          Buscar Elenco no FotMob
         </button>
 
-        {/* Formation dropdown */}
         <div className="flex items-center gap-2">
-          <label className="text-xs text-txt-secondary flex-shrink-0">Formação</label>
+          <label className="flex-shrink-0 text-xs text-txt-secondary">Formacao</label>
           <select
-            className="flex-1 text-xs rounded-lg px-2 py-1.5 outline-none cursor-pointer font-semibold appearance-none"
+            className="flex-1 appearance-none rounded-lg px-2 py-1.5 text-xs font-semibold outline-none"
             style={SELECT_STYLE}
             value={team.formation}
-            onChange={(e) => dispatch({ type: 'SET_FORMATION', teamId, formation: e.target.value })}
+            onChange={(event) =>
+              dispatch({
+                type: 'SET_FORMATION',
+                teamId,
+                formation: event.target.value,
+              })
+            }
           >
-            {formationKeys.map((f) => (
-              <option key={f} value={f} style={OPTION_STYLE}>{f}</option>
+            {formationKeys.map((formation) => (
+              <option key={formation} value={formation} style={OPTION_STYLE}>
+                {formation}
+              </option>
             ))}
           </select>
         </div>
       </div>
 
-      {/* ── Player Roster ── */}
-      <div className="flex-1 overflow-y-auto scrollbar-thin p-2">
-        <label className="text-xs font-semibold block mb-1 px-1 text-txt-secondary">
+      <div className="scrollbar-thin flex-1 overflow-y-auto p-2">
+        <label className="mb-1 block px-1 font-display text-[11px] uppercase tracking-[0.16em] text-txt-secondary">
           Jogadores ({team.players.length})
         </label>
+
         <div className="flex flex-col gap-0.5">
-          {team.players.map((player, idx) => (
+          {team.players.map((player, index) => (
             <PlayerRow
               key={player.id}
               player={player}
@@ -127,8 +165,8 @@ export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
               teamId={teamId}
               dispatch={dispatch}
               isActive={selectedPlayer?.id === player.id && selectedPlayer?.teamId === teamId}
-              isFirst={idx === 0}
-              isLast={idx === team.players.length - 1}
+              isFirst={index === 0}
+              isLast={index === team.players.length - 1}
             />
           ))}
         </div>
@@ -137,9 +175,8 @@ export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
   );
 }
 
-/** Single player row — inline edits on number/name/position + pencil menu. */
 function PlayerRow({ player, team, teamId, dispatch, isActive, isFirst, isLast }) {
-  const [editField, setEditField] = useState(null); // 'number' | 'name' | 'position'
+  const [editField, setEditField] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
   const numRef = useRef(null);
   const nameRef = useRef(null);
@@ -147,25 +184,50 @@ function PlayerRow({ player, team, teamId, dispatch, isActive, isFirst, isLast }
   const menuRef = useRef(null);
 
   useEffect(() => {
-    if (editField === 'number' && numRef.current) { numRef.current.focus(); numRef.current.select(); }
-    if (editField === 'name' && nameRef.current) { nameRef.current.focus(); nameRef.current.select(); }
-    if (editField === 'position' && posRef.current) { posRef.current.focus(); posRef.current.select(); }
+    if (editField === 'number' && numRef.current) {
+      numRef.current.focus();
+      numRef.current.select();
+    }
+
+    if (editField === 'name' && nameRef.current) {
+      nameRef.current.focus();
+      nameRef.current.select();
+    }
+
+    if (editField === 'position' && posRef.current) {
+      posRef.current.focus();
+      posRef.current.select();
+    }
   }, [editField]);
 
   useEffect(() => {
-    if (!showMenu) return;
-    const handler = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setShowMenu(false);
+    if (!showMenu) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
     };
-    document.addEventListener('pointerdown', handler);
-    return () => document.removeEventListener('pointerdown', handler);
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
   }, [showMenu]);
 
   const update = (updates) =>
     dispatch({ type: 'UPDATE_PLAYER', teamId, playerId: player.id, updates });
 
-  const stopAndEdit = (e, field) => {
-    e.stopPropagation();
+  const openEditor = () =>
+    dispatch({
+      type: 'SET_UI',
+      updates: {
+        selectedPlayer: { teamId, id: player.id },
+        selectedTeam: teamId,
+        showPlayerEditor: true,
+      },
+    });
+
+  const stopAndEdit = (event, field) => {
+    event.stopPropagation();
     setEditField(field);
   };
 
@@ -173,10 +235,10 @@ function PlayerRow({ player, team, teamId, dispatch, isActive, isFirst, isLast }
 
   return (
     <div
-      className="flex items-center gap-1 rounded-lg px-1.5 py-1 transition-all duration-150 group relative"
+      className="group relative flex items-center gap-1 rounded-xl px-1.5 py-1 transition-all duration-150"
       style={{
-        background: isActive ? 'rgba(59,130,246,0.15)' : 'transparent',
-        borderLeft: isActive ? '2px solid var(--color-accent)' : '2px solid transparent',
+        background: isActive ? 'rgba(20, 201, 107, 0.12)' : 'transparent',
+        borderLeft: isActive ? '2px solid var(--accent)' : '2px solid transparent',
       }}
       onClick={() =>
         dispatch({
@@ -187,114 +249,145 @@ function PlayerRow({ player, team, teamId, dispatch, isActive, isFirst, isLast }
           },
         })
       }
+      onDoubleClick={(event) => {
+        event.stopPropagation();
+        openEditor();
+      }}
     >
-      {/* Number badge */}
       <div
-        className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 cursor-text"
+        className="flex h-6 w-6 flex-shrink-0 cursor-text items-center justify-center rounded-full text-[10px] font-bold"
         style={{ background: player.colorOverride || team.primaryColor, color: team.numberColor }}
-        onClick={(e) => stopAndEdit(e, 'number')}
-        title="Editar número"
+        onClick={(event) => stopAndEdit(event, 'number')}
+        title="Editar numero"
       >
         {editField === 'number' ? (
           <input
             ref={numRef}
-            className="w-5 h-5 bg-transparent text-center text-[10px] font-bold outline-none"
+            className="h-5 w-5 bg-transparent text-center text-[10px] font-bold outline-none"
             style={{ color: team.numberColor }}
             value={player.number}
             maxLength={2}
-            onClick={(e) => e.stopPropagation()}
-            onChange={(e) => {
-              const n = e.target.value.replace(/\D/g, '');
-              update({ number: n ? Number(n) : '' });
+            onClick={(event) => event.stopPropagation()}
+            onChange={(event) => {
+              const nextValue = event.target.value.replace(/\D/g, '');
+              update({ number: nextValue ? Number(nextValue) : '' });
             }}
             onBlur={commit}
-            onKeyDown={(e) => { if (e.key === 'Enter') commit(); }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') commit();
+            }}
           />
-        ) : player.number}
+        ) : (
+          player.number
+        )}
       </div>
 
-      {/* Name */}
       <div
-        className="flex-1 min-w-0 cursor-text"
-        onClick={(e) => stopAndEdit(e, 'name')}
+        className="min-w-0 flex-1 cursor-text"
+        onClick={(event) => stopAndEdit(event, 'name')}
         title="Editar nome"
       >
         {editField === 'name' ? (
           <input
             ref={nameRef}
-            className="w-full bg-white/10 rounded px-1 py-0 text-xs font-medium outline-none text-txt-primary"
+            className="w-full rounded bg-white/10 px-1 py-0 text-xs font-medium text-txt-primary outline-none"
             value={player.name}
-            onClick={(e) => e.stopPropagation()}
-            onChange={(e) => update({ name: e.target.value })}
+            onClick={(event) => event.stopPropagation()}
+            onChange={(event) => update({ name: event.target.value })}
             onBlur={commit}
-            onKeyDown={(e) => { if (e.key === 'Enter') commit(); }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') commit();
+            }}
           />
         ) : (
-          <span className="text-xs font-medium truncate block text-txt-primary hover:text-accent transition-colors">
+          <span className="block truncate text-xs font-medium text-txt-primary transition-colors hover:text-accent">
             {player.name}
           </span>
         )}
       </div>
 
-      {/* Position */}
       <div
         className="flex-shrink-0 cursor-text"
-        onClick={(e) => stopAndEdit(e, 'position')}
-        title="Editar posição"
+        onClick={(event) => stopAndEdit(event, 'position')}
+        title="Editar posicao"
       >
         {editField === 'position' ? (
           <input
             ref={posRef}
-            className="w-9 text-center bg-white/10 rounded px-1 py-0 text-[10px] font-medium outline-none text-txt-primary"
+            className="w-10 rounded bg-white/10 px-1 py-0 text-center text-[10px] font-medium text-txt-primary outline-none"
             value={player.position}
             maxLength={4}
-            onClick={(e) => e.stopPropagation()}
-            onChange={(e) => update({ position: e.target.value.toUpperCase() })}
+            onClick={(event) => event.stopPropagation()}
+            onChange={(event) => update({ position: event.target.value.toUpperCase() })}
             onBlur={commit}
-            onKeyDown={(e) => { if (e.key === 'Enter') commit(); }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') commit();
+            }}
           />
         ) : (
-          <span className="text-[10px] text-txt-secondary font-medium w-8 text-center block hover:text-accent transition-colors">
+          <span className="block w-8 text-center text-[10px] font-medium text-txt-secondary transition-colors hover:text-accent">
             {player.position}
           </span>
         )}
       </div>
 
-      {/* Pencil icon + context menu */}
       <div className="relative flex-shrink-0" ref={menuRef}>
         <button
-          className="w-5 h-5 flex items-center justify-center rounded hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-all text-txt-secondary hover:text-txt-primary"
-          onClick={(e) => { e.stopPropagation(); setShowMenu((v) => !v); }}
-          title="Mais opções"
+          className="flex h-5 w-5 items-center justify-center rounded text-txt-secondary opacity-0 transition-all hover:bg-white/10 hover:text-txt-primary group-hover:opacity-100"
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowMenu((current) => !current);
+          }}
+          title="Mais opcoes"
         >
           <Pencil size={11} />
         </button>
 
         {showMenu && (
           <div
-            className="absolute right-0 top-6 z-50 rounded-xl shadow-2xl border border-white/10 p-1 min-w-[158px] flex flex-col gap-0.5"
-            style={{ backgroundColor: '#1e2233' }}
-            onClick={(e) => e.stopPropagation()}
+            className="absolute right-0 top-6 z-50 flex min-w-[168px] flex-col gap-0.5 rounded-2xl border border-white/10 p-1 shadow-2xl"
+            style={{ backgroundColor: '#101F17' }}
+            onClick={(event) => event.stopPropagation()}
           >
             <OptionBtn
+              icon={<Pencil size={12} />}
+              label="Editar jogador"
+              onClick={() => {
+                openEditor();
+                setShowMenu(false);
+              }}
+            />
+            <div className="my-0.5 h-px bg-white/10" />
+            <OptionBtn
               icon={<Shield size={12} />}
-              label="Capitão"
+              label="Capitao"
               active={player.isCaptain}
-              onClick={() => { dispatch({ type: 'SET_CAPTAIN', teamId, playerId: player.id }); setShowMenu(false); }}
+              onClick={() => {
+                dispatch({ type: 'SET_CAPTAIN', teamId, playerId: player.id });
+                setShowMenu(false);
+              }}
             />
             <OptionBtn
               icon={<Star size={12} />}
               label="Destaque"
               active={player.isKeyPlayer}
-              onClick={() => { update({ isKeyPlayer: !player.isKeyPlayer }); setShowMenu(false); }}
+              onClick={() => {
+                update({ isKeyPlayer: !player.isKeyPlayer });
+                setShowMenu(false);
+              }}
             />
-            <div className="h-px bg-white/10 my-0.5" />
+            <div className="my-0.5 h-px bg-white/10" />
             <OptionBtn
               icon={<ChevronUp size={12} />}
               label="Mover para cima"
               disabled={isFirst}
               onClick={() => {
-                dispatch({ type: 'REORDER_PLAYER', teamId, playerId: player.id, direction: 'up' });
+                dispatch({
+                  type: 'REORDER_PLAYER',
+                  teamId,
+                  playerId: player.id,
+                  direction: 'up',
+                });
                 setShowMenu(false);
               }}
             />
@@ -303,7 +396,12 @@ function PlayerRow({ player, team, teamId, dispatch, isActive, isFirst, isLast }
               label="Mover para baixo"
               disabled={isLast}
               onClick={() => {
-                dispatch({ type: 'REORDER_PLAYER', teamId, playerId: player.id, direction: 'down' });
+                dispatch({
+                  type: 'REORDER_PLAYER',
+                  teamId,
+                  playerId: player.id,
+                  direction: 'down',
+                });
                 setShowMenu(false);
               }}
             />
@@ -319,10 +417,10 @@ function OptionBtn({ icon, label, active, disabled, onClick }) {
     <button
       disabled={disabled}
       onClick={onClick}
-      className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs w-full text-left transition-colors hover:bg-white/[0.08] disabled:opacity-40 disabled:cursor-not-allowed"
+      className="flex w-full items-center gap-2 rounded-xl px-2 py-1.5 text-left text-xs transition-colors hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40"
       style={{
-        color: active ? '#3B82F6' : '#f1f3f5',
-        backgroundColor: active ? 'rgba(59,130,246,0.12)' : 'transparent',
+        color: active ? '#14C96B' : '#F5F7F5',
+        backgroundColor: active ? 'rgba(20, 201, 107, 0.12)' : 'transparent',
       }}
     >
       {icon}
@@ -331,56 +429,98 @@ function OptionBtn({ icon, label, active, disabled, onClick }) {
   );
 }
 
-/** Small pattern swatch circle */
 function PatternSwatch({ patternKey, label, primary, secondary, selected, onClick }) {
-  const s = 20;
-  const r = s / 2;
+  const size = 20;
+  const radius = size / 2;
 
   const getPattern = () => {
     switch (patternKey) {
       case 'cheques':
         return (
           <>
-            <rect width={r} height={r} fill={secondary} />
-            <rect x={r} y={r} width={r} height={r} fill={secondary} />
+            <rect width={radius} height={radius} fill={secondary} />
+            <rect x={radius} y={radius} width={radius} height={radius} fill={secondary} />
           </>
         );
-      case 'half_half_h': return <rect y={r} width={s} height={r} fill={secondary} />;
-      case 'half_half_v': return <rect x={r} width={r} height={s} fill={secondary} />;
+      case 'half_half_h':
+        return <rect y={radius} width={size} height={radius} fill={secondary} />;
+      case 'half_half_v':
+        return <rect x={radius} width={radius} height={size} fill={secondary} />;
       case 'stripes_v':
-        return <>{[0, 2, 4].map((i) => <rect key={i} x={i * (s / 6)} width={s / 6} height={s} fill={secondary} />)}</>;
+        return (
+          <>
+            {[0, 2, 4].map((index) => (
+              <rect
+                key={index}
+                x={index * (size / 6)}
+                width={size / 6}
+                height={size}
+                fill={secondary}
+              />
+            ))}
+          </>
+        );
       case 'stripes_h':
-        return <>{[0, 2, 4].map((i) => <rect key={i} y={i * (s / 6)} width={s} height={s / 6} fill={secondary} />)}</>;
+        return (
+          <>
+            {[0, 2, 4].map((index) => (
+              <rect
+                key={index}
+                y={index * (size / 6)}
+                width={size}
+                height={size / 6}
+                fill={secondary}
+              />
+            ))}
+          </>
+        );
       case 'stripes_thin':
-        return <>{[0, 2, 4, 6].map((i) => <rect key={i} x={i * (s / 8)} width={s / 16} height={s} fill={secondary} />)}</>;
+        return (
+          <>
+            {[0, 2, 4, 6].map((index) => (
+              <rect
+                key={index}
+                x={index * (size / 8)}
+                width={size / 16}
+                height={size}
+                fill={secondary}
+              />
+            ))}
+          </>
+        );
       case 'stripe_diagonal':
-        return <polygon points={`0,0 ${s * 0.6},0 0,${s * 0.6}`} fill={secondary} />;
-      case 'stripe_h': return <rect y={s * 0.35} width={s} height={s * 0.3} fill={secondary} />;
-      case 'stripe_v': return <rect x={s * 0.35} width={s * 0.3} height={s} fill={secondary} />;
+        return (
+          <polygon points={`0,0 ${size * 0.6},0 0,${size * 0.6}`} fill={secondary} />
+        );
+      case 'stripe_h':
+        return <rect y={size * 0.35} width={size} height={size * 0.3} fill={secondary} />;
+      case 'stripe_v':
+        return <rect x={size * 0.35} width={size * 0.3} height={size} fill={secondary} />;
       case 'stripe_cut':
-        return <polygon points={`0,0 ${s},0 0,${s}`} fill={secondary} />;
+        return <polygon points={`0,0 ${size},0 0,${size}`} fill={secondary} />;
       case 'stripe_thick':
         return (
           <>
-            <rect width={s / 3} height={s} fill={secondary} />
-            <rect x={s * 2 / 3} width={s / 3} height={s} fill={secondary} />
+            <rect width={size / 3} height={size} fill={secondary} />
+            <rect x={(size * 2) / 3} width={size / 3} height={size} fill={secondary} />
           </>
         );
       case 'quarters':
         return (
           <>
-            <rect x={r} width={r} height={r} fill={secondary} />
-            <rect y={r} width={r} height={r} fill={secondary} />
+            <rect x={radius} width={radius} height={radius} fill={secondary} />
+            <rect y={radius} width={radius} height={radius} fill={secondary} />
           </>
         );
       case 'vshape':
         return (
           <polygon
-            points={`0,0 ${r},${s * 0.6} ${s},0 ${s},${s * 0.35} ${r},${s * 0.95} 0,${s * 0.35}`}
+            points={`0,0 ${radius},${size * 0.6} ${size},0 ${size},${size * 0.35} ${radius},${size * 0.95} 0,${size * 0.35}`}
             fill={secondary}
           />
         );
-      default: return null;
+      default:
+        return null;
     }
   };
 
@@ -391,22 +531,22 @@ function PatternSwatch({ patternKey, label, primary, secondary, selected, onClic
       className="flex-shrink-0 focus:outline-none"
       style={{
         borderRadius: '50%',
-        outline: selected ? '2px solid #3B82F6' : '2px solid transparent',
+        outline: selected ? '2px solid #14C96B' : '2px solid transparent',
         outlineOffset: '2px',
         padding: 0,
       }}
     >
       <svg
-        width={s}
-        height={s}
-        viewBox={`0 0 ${s} ${s}`}
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
         style={{ borderRadius: '50%', display: 'block', overflow: 'hidden' }}
       >
         <clipPath id={`clip-swatch-${patternKey}`}>
-          <circle cx={r} cy={r} r={r} />
+          <circle cx={radius} cy={radius} r={radius} />
         </clipPath>
         <g clipPath={`url(#clip-swatch-${patternKey})`}>
-          <rect width={s} height={s} fill={primary} />
+          <rect width={size} height={size} fill={primary} />
           {getPattern()}
         </g>
       </svg>
@@ -414,61 +554,138 @@ function PatternSwatch({ patternKey, label, primary, secondary, selected, onClic
   );
 }
 
-/** Small color input with label */
 function ColorPicker({ label, value, onChange }) {
   return (
     <div className="flex flex-col items-center gap-0.5">
       <input
         type="color"
-        className="w-6 h-6 rounded cursor-pointer border-0"
+        className="h-7 w-7 cursor-pointer rounded"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
       />
       <span className="text-[9px] text-txt-secondary">{label}</span>
     </div>
   );
 }
 
-/** Inline SVG preview of the selected shirt pattern */
 function ShirtPreview({ pattern, primary, secondary, numberColor }) {
-  const s = 28;
+  const size = 30;
+
   const getPatternEl = () => {
     switch (pattern) {
       case 'cheques':
-        return <><rect width={s / 2} height={s / 2} fill={secondary} /><rect x={s / 2} y={s / 2} width={s / 2} height={s / 2} fill={secondary} /></>;
-      case 'half_half_h': return <rect y={s / 2} width={s} height={s / 2} fill={secondary} />;
-      case 'half_half_v': return <rect x={s / 2} width={s / 2} height={s} fill={secondary} />;
-      case 'stripes_v': return <>{[0, 2, 4].map((i) => <rect key={i} x={i * (s / 6)} width={s / 6} height={s} fill={secondary} />)}</>;
-      case 'stripes_h': return <>{[0, 2, 4].map((i) => <rect key={i} y={i * (s / 6)} width={s} height={s / 6} fill={secondary} />)}</>;
-      case 'stripes_thin': return <>{[0, 2, 4, 6].map((i) => <rect key={i} x={i * (s / 8)} width={s / 16} height={s} fill={secondary} />)}</>;
-      case 'stripe_diagonal': return <polygon points={`0,0 ${s * 0.6},0 0,${s * 0.6}`} fill={secondary} />;
-      case 'stripe_h': return <rect y={s * 0.35} width={s} height={s * 0.3} fill={secondary} />;
-      case 'stripe_v': return <rect x={s * 0.35} width={s * 0.3} height={s} fill={secondary} />;
-      case 'stripe_cut': return <polygon points={`0,0 ${s},0 0,${s}`} fill={secondary} />;
-      case 'stripe_thick': return <><rect width={s / 3} height={s} fill={secondary} /><rect x={s * 2 / 3} width={s / 3} height={s} fill={secondary} /></>;
-      case 'quarters': return <><rect x={s / 2} width={s / 2} height={s / 2} fill={secondary} /><rect y={s / 2} width={s / 2} height={s / 2} fill={secondary} /></>;
-      case 'vshape': return <polygon points={`0,0 ${s / 2},${s * 0.6} ${s},0 ${s},${s * 0.35} ${s / 2},${s * 0.95} 0,${s * 0.35}`} fill={secondary} />;
-      default: return null;
+        return (
+          <>
+            <rect width={size / 2} height={size / 2} fill={secondary} />
+            <rect
+              x={size / 2}
+              y={size / 2}
+              width={size / 2}
+              height={size / 2}
+              fill={secondary}
+            />
+          </>
+        );
+      case 'half_half_h':
+        return <rect y={size / 2} width={size} height={size / 2} fill={secondary} />;
+      case 'half_half_v':
+        return <rect x={size / 2} width={size / 2} height={size} fill={secondary} />;
+      case 'stripes_v':
+        return (
+          <>
+            {[0, 2, 4].map((index) => (
+              <rect
+                key={index}
+                x={index * (size / 6)}
+                width={size / 6}
+                height={size}
+                fill={secondary}
+              />
+            ))}
+          </>
+        );
+      case 'stripes_h':
+        return (
+          <>
+            {[0, 2, 4].map((index) => (
+              <rect
+                key={index}
+                y={index * (size / 6)}
+                width={size}
+                height={size / 6}
+                fill={secondary}
+              />
+            ))}
+          </>
+        );
+      case 'stripes_thin':
+        return (
+          <>
+            {[0, 2, 4, 6].map((index) => (
+              <rect
+                key={index}
+                x={index * (size / 8)}
+                width={size / 16}
+                height={size}
+                fill={secondary}
+              />
+            ))}
+          </>
+        );
+      case 'stripe_diagonal':
+        return (
+          <polygon points={`0,0 ${size * 0.6},0 0,${size * 0.6}`} fill={secondary} />
+        );
+      case 'stripe_h':
+        return <rect y={size * 0.35} width={size} height={size * 0.3} fill={secondary} />;
+      case 'stripe_v':
+        return <rect x={size * 0.35} width={size * 0.3} height={size} fill={secondary} />;
+      case 'stripe_cut':
+        return <polygon points={`0,0 ${size},0 0,${size}`} fill={secondary} />;
+      case 'stripe_thick':
+        return (
+          <>
+            <rect width={size / 3} height={size} fill={secondary} />
+            <rect x={(size * 2) / 3} width={size / 3} height={size} fill={secondary} />
+          </>
+        );
+      case 'quarters':
+        return (
+          <>
+            <rect x={size / 2} width={size / 2} height={size / 2} fill={secondary} />
+            <rect y={size / 2} width={size / 2} height={size / 2} fill={secondary} />
+          </>
+        );
+      case 'vshape':
+        return (
+          <polygon
+            points={`0,0 ${size / 2},${size * 0.6} ${size},0 ${size},${size * 0.35} ${size / 2},${size * 0.95} 0,${size * 0.35}`}
+            fill={secondary}
+          />
+        );
+      default:
+        return null;
     }
   };
+
   return (
     <svg
-      width={s}
-      height={s}
-      viewBox={`0 0 ${s} ${s}`}
-      className="rounded-md border border-white/10 flex-shrink-0 ml-auto"
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      className="ml-auto flex-shrink-0 rounded-lg border border-white/10"
     >
-      <rect width={s} height={s} fill={primary} rx="3" />
+      <rect width={size} height={size} fill={primary} rx="4" />
       {getPatternEl()}
       <text
-        x={s / 2}
-        y={s / 2}
+        x={size / 2}
+        y={size / 2}
         textAnchor="middle"
         dominantBaseline="central"
         fill={numberColor}
         fontSize="10"
         fontWeight="800"
-        fontFamily="Inter, sans-serif"
+        fontFamily="Sora, sans-serif"
       >
         10
       </text>
