@@ -46,6 +46,57 @@ function ensureHash(color) {
   return color;
 }
 
+/**
+ * Build 11 players from squad groups (fallback for national teams or
+ * teams whose lastLineupStats is unavailable).
+ * Returns null if squad data is insufficient.
+ */
+function buildSquadLineup(squadData) {
+  if (!Array.isArray(squadData) || squadData.length === 0) return null;
+
+  let keepers = [], defenders = [], midfielders = [], forwards = [];
+
+  for (const group of squadData) {
+    const t = (group.title || '').toLowerCase();
+    if (t.includes('keep') || t.includes('goalie') || t.includes('goleiro') || t.includes('portero')) {
+      keepers = group.members || [];
+    } else if (t.includes('defend') || t.includes('lateral') || t.includes('zugueiro') || t.includes('back')) {
+      defenders = group.members || [];
+    } else if (t.includes('mid') || t.includes('meio') || t.includes('volante') || t.includes('centrocam')) {
+      midfielders = group.members || [];
+    } else if (t.includes('forward') || t.includes('attack') || t.includes('atacan') || t.includes('ponta') || t.includes('striker') || t.includes('winger')) {
+      forwards = group.members || [];
+    }
+  }
+
+  if (keepers.length === 0 && defenders.length === 0) return null;
+
+  // Default 4-3-3 positions for squad fallback
+  const squadPositions = ['GK', 'RB', 'CB', 'CB', 'LB', 'CM', 'CM', 'CM', 'RW', 'ST', 'LW'];
+
+  const pool = [
+    ...keepers.slice(0, 1),
+    ...defenders.slice(0, 4),
+    ...midfielders.slice(0, 3),
+    ...forwards.slice(0, 3),
+  ];
+
+  // Pad if a group was short
+  let padIdx = 0;
+  const allMembers = [...keepers, ...defenders, ...midfielders, ...forwards];
+  while (pool.length < 11 && padIdx < allMembers.length) {
+    if (!pool.includes(allMembers[padIdx])) pool.push(allMembers[padIdx]);
+    padIdx++;
+  }
+
+  return pool.slice(0, 11).map((p, i) => ({
+    fotmobId: p.id || null,
+    name: p.name || `Jogador ${i + 1}`,
+    number: parseInt(p.shirtNumber || p.shirt, 10) || i + 1,
+    position: squadPositions[i] || 'CM',
+  }));
+}
+
 export default async function handler(req, res) {
   const { teamId } = req.query;
 
@@ -86,25 +137,34 @@ export default async function handler(req, res) {
 
     // ── Last lineup (formation + starters) ──
     const lastLineup = teamData?.overview?.lastLineupStats;
+    let formation, players, isSquadFallback;
 
-    if (!lastLineup || !lastLineup.starters || lastLineup.starters.length === 0) {
-      return res.status(404).json({
-        error: 'Escalacao nao disponivel para este time.',
-        team: { name: teamName, shortName, logo },
-      });
+    if (lastLineup && lastLineup.starters && lastLineup.starters.length > 0) {
+      // Primary path: real lineup from last match
+      isSquadFallback = false;
+      formation = lastLineup.formation || '4-3-3';
+      players = lastLineup.starters.map((p) => ({
+        fotmobId: p.id || null,
+        name: p.name || 'Desconhecido',
+        number: parseInt(p.shirtNumber, 10) || 0,
+        position: mapPosition(p.positionId, p.usualPlayingPositionId),
+      }));
+    } else {
+      // Fallback: build 11 from squad groups (national teams / no recent match)
+      const squadLineup = buildSquadLineup(teamData?.squad?.squad);
+      if (!squadLineup) {
+        return res.status(404).json({
+          error: 'Escalacao nao disponivel para este time.',
+          team: { name: teamName, shortName, logo },
+        });
+      }
+      isSquadFallback = true;
+      formation = '4-3-3';
+      players = squadLineup;
     }
 
-    const formation = lastLineup.formation || '4-3-3';
-
-    const players = lastLineup.starters.map((p) => ({
-      name: p.name || 'Desconhecido',
-      number: parseInt(p.shirtNumber, 10) || 0,
-      position: mapPosition(p.positionId, p.usualPlayingPositionId),
-    }));
-
-    // ── Last match info ──
-    const lastMatch = teamData?.overview?.lastMatch;
-    const teamIdNum = parseInt(teamId, 10);
+    // ── Last match info (only for real lineup) ──
+    const lastMatch = !isSquadFallback ? teamData?.overview?.lastMatch : null;
     let fixtureDate = '';
     let homeTeamName = '';
     let awayTeamName = '';
@@ -130,7 +190,7 @@ export default async function handler(req, res) {
         logo,
       },
       players,
-      fixture: {
+      fixture: isSquadFallback ? null : {
         id: String(lastMatch?.id || ''),
         date: fixtureDate,
         home: homeTeamName,

@@ -5,8 +5,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['Orbitron', 'sans-serif'],
-        body: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Sora', 'sans-serif'],
+        body: ['Poppins', 'system-ui', 'sans-serif'],
       },
       colors: {
         surface: {
