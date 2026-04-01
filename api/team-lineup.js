@@ -1,4 +1,5 @@
 import { buildShortName, fotmobFetchJson } from './_fotmob.js';
+import { mapGridToPosition } from '../src/data/gridPositionMap.js';
 
 /** FotMob positionId -> tactical abbreviation */
 const POSITION_ID_MAP = {
@@ -70,6 +71,13 @@ function mapPosition(positionId, usualPosId) {
   return POSITION_ID_MAP[positionId] || USUAL_POS_FALLBACK[usualPosId] || 'CM';
 }
 
+function parseFormation(formation) {
+  return String(formation || '')
+    .split('-')
+    .map((value) => Number.parseInt(value, 10))
+    .filter((value) => Number.isFinite(value) && value > 0);
+}
+
 function ensureHash(color) {
   if (!color) return null;
 
@@ -97,6 +105,39 @@ function normalizePlayer(member, fallbackIndex = 0) {
     number: Number.parseInt(member?.shirtNumber || member?.shirt, 10) || fallbackIndex + 1,
     position: mapPosition(member?.positionId, member?.usualPlayingPositionId),
   };
+}
+
+function buildPlayersFromLastLineup(starters, formation) {
+  if (!Array.isArray(starters) || starters.length === 0) return [];
+
+  const rows = parseFormation(formation);
+  const normalizedStarters = starters.map((player, index) => normalizePlayer(player, index));
+  const goalkeeperIndex = normalizedStarters.findIndex((player) => player.position === 'GK');
+  const goalkeeper =
+    goalkeeperIndex >= 0 ? normalizedStarters[goalkeeperIndex] : normalizedStarters[0];
+  const outfieldPlayers = normalizedStarters.filter((_, index) => index !== goalkeeperIndex);
+
+  if (rows.reduce((sum, count) => sum + count, 0) !== outfieldPlayers.length) {
+    return normalizedStarters;
+  }
+
+  const slottedPlayers = [goalkeeper];
+  let offset = 0;
+
+  rows.forEach((count, rowIndex) => {
+    const rowPlayers = outfieldPlayers.slice(offset, offset + count).reverse();
+
+    rowPlayers.forEach((player, colIndex) => {
+      slottedPlayers.push({
+        ...player,
+        position: mapGridToPosition(formation, rowIndex + 2, colIndex + 1),
+      });
+    });
+
+    offset += count;
+  });
+
+  return slottedPlayers;
 }
 
 function classifySquadGroup(title) {
@@ -207,12 +248,7 @@ export default async function handler(req, res) {
 
     if (lastLineup?.starters?.length) {
       formation = lastLineup.formation || formation;
-      players = lastLineup.starters.map((player, index) => ({
-        fotmobId: player?.id || null,
-        name: player?.name || `Jogador ${index + 1}`,
-        number: Number.parseInt(player?.shirtNumber, 10) || index + 1,
-        position: mapPosition(player?.positionId, player?.usualPlayingPositionId),
-      }));
+      players = buildPlayersFromLastLineup(lastLineup.starters, formation);
     } else {
       players = buildSquadLineup(teamData?.squad?.squad);
       isSquadFallback = true;
