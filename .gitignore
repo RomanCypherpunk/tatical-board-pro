@@ -36,3 +36,6 @@ npm-debug.log*
 # Cache
 .cache/
 .parcel-cache/
+
+# Temp files com nome de caminho (bug de path concatenation)
+C:Users*
