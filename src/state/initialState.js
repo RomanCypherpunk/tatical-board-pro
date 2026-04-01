@@ -64,6 +64,7 @@ export default function initialState() {
       selectedArrow: null,
       showPlayerEditor: false,
       showLiveSearch: null,
+      pitchFullscreen: false,
     },
   };
 }

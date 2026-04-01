@@ -1,9 +1,9 @@
-import { Download, Save } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 /**
- * Top header bar with branding and export actions.
+ * Top header bar with branding and a single export action.
  */
-export default function Header({ onSave, onExport }) {
+export default function Header({ onExport }) {
   return (
     <header className="glass relative z-20 flex flex-shrink-0 flex-wrap items-center justify-between gap-3 overflow-hidden border-b border-white/[0.08] px-4 py-3">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/80 to-transparent" />
@@ -25,24 +25,10 @@ export default function Header({ onSave, onExport }) {
 
       <div className="flex flex-wrap items-center gap-2">
         <button
-          className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs text-txt-secondary transition-all duration-200 hover:bg-white/10"
-          onClick={onSave}
-        >
-          <Save size={14} /> Salvar
-        </button>
-
-        <button
-          className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-txt-primary transition-all duration-200 hover:bg-white/10"
-          onClick={() => onExport('png')}
-        >
-          <Download size={14} /> Exportar PNG
-        </button>
-
-        <button
           className="flex items-center gap-1.5 rounded-xl bg-accent px-3 py-2 text-xs text-white transition-all duration-200 hover:bg-accent-hover"
-          onClick={() => onExport('jpg')}
+          onClick={onExport}
         >
-          <Download size={14} /> Exportar JPG
+          <Download size={14} /> EXPORTAR
         </button>
       </div>
     </header>

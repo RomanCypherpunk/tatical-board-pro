@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  Expand,
   FlipHorizontal,
   Hash,
   Image as ImageIcon,
@@ -39,7 +40,7 @@ const PITCH_ORIENTATIONS = [
 /**
  * Bottom toolbar with player view modes, pitch theme, arrows and actions.
  */
-export default function BottomToolbar({ ui, dispatch }) {
+export default function BottomToolbar({ ui, dispatch, onTogglePitchFullscreen }) {
   const setUI = (updates) => dispatch({ type: 'SET_UI', updates });
 
   return (
@@ -180,6 +181,11 @@ export default function BottomToolbar({ ui, dispatch }) {
         Icon={RotateCcw}
         label="Resetar"
         onClick={() => dispatch({ type: 'RESET_POSITIONS' })}
+      />
+      <ToolbarButton
+        Icon={Expand}
+        label="Tela Cheia"
+        onClick={onTogglePitchFullscreen}
       />
 
       <Divider />
