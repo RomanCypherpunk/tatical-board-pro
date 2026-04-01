@@ -61,16 +61,14 @@ export function mapGridToPosition(formation, row, col) {
   const count = layers[layerIndex];
   const colIdx = col - 1; // 0-based
   const totalLayers = layers.length;
-  const isDefense = layerIndex === 0;
-  const isAttack = layerIndex === totalLayers - 1;
+  const layerRole = getLayerRole(formation, layerIndex, totalLayers);
 
   let map;
-  if (isDefense) {
+  if (layerRole === 'defense') {
     map = DEFENSE_MAPS[count];
-  } else if (isAttack) {
+  } else if (layerRole === 'attack') {
     map = ATTACK_MAPS[count];
-  } else if (layerIndex === totalLayers - 2 && totalLayers >= 3) {
-    // Second-to-last layer with 3+ layers = attacking midfield
+  } else if (layerRole === 'attackMid') {
     map = ATTACK_MID_MAPS[count] || MIDFIELD_MAPS[count];
   } else {
     map = MIDFIELD_MAPS[count];
@@ -80,33 +78,61 @@ export function mapGridToPosition(formation, row, col) {
   return map[Math.min(colIdx, map.length - 1)] || 'CM';
 }
 
+const FORMATION_ROLE_LAYOUTS = {
+  '4-3-3': ['defense', 'midfield', 'attack'],
+  '4-2-3-1': ['defense', 'midfield', 'attackMid', 'attack'],
+  '4-4-2': ['defense', 'midfield', 'attack'],
+  '4-1-4-1': ['defense', 'midfield', 'midfield', 'attack'],
+  '4-1-2-1-2': ['defense', 'midfield', 'midfield', 'attackMid', 'attack'],
+  '4-2-2-2': ['defense', 'midfield', 'attackMid', 'attack'],
+  '4-2-4': ['defense', 'midfield', 'attack'],
+  '3-4-3': ['defense', 'midfield', 'attack'],
+  '3-4-2-1': ['defense', 'midfield', 'attackMid', 'attack'],
+  '3-5-2': ['defense', 'midfield', 'attack'],
+  '3-2-2-3': ['defense', 'midfield', 'attackMid', 'attack'],
+  '5-4-1': ['defense', 'midfield', 'attack'],
+  '5-3-2': ['defense', 'midfield', 'attack'],
+  '5-2-3': ['defense', 'midfield', 'attack'],
+};
+
+function getLayerRole(formation, layerIndex, totalLayers) {
+  const mappedRole = FORMATION_ROLE_LAYOUTS[formation]?.[layerIndex];
+  if (mappedRole) return mappedRole;
+
+  if (layerIndex === 0) return 'defense';
+  if (layerIndex === totalLayers - 1) return 'attack';
+  if (layerIndex === totalLayers - 2 && totalLayers >= 3) return 'attackMid';
+  return 'midfield';
+}
+
 /**
  * Find the closest matching formation key from the app's FORMATIONS database.
  * If exact match exists, returns it. Otherwise, tries common aliases.
  */
 const FORMATION_ALIASES = {
   '4-3-3': '4-3-3',
-  '4-4-2': '4-4-2',
   '4-2-3-1': '4-2-3-1',
-  '3-5-2': '3-5-2',
-  '3-4-3': '3-4-3',
-  '4-1-4-1': '4-1-4-1',
-  '4-4-1-1': '4-4-1-1',
-  '4-3-2-1': '4-3-2-1',
-  '5-3-2': '5-3-2',
-  '5-4-1': '5-4-1',
-  '4-2-4': '4-2-4',
-  '3-4-1-2': '3-4-1-2',
+  '4-4-2': '4-4-2',
   '4-1-2-1-2': '4-1-2-1-2',
   '4-2-2-2': '4-2-2-2',
-  '3-3-4': '3-3-4',
+  '4-1-4-1': '4-1-4-1',
+  '4-2-4': '4-2-4',
+  '3-5-2': '3-5-2',
+  '3-4-2-1': '3-4-2-1',
+  '3-4-3': '3-4-3',
+  '3-2-2-3': '3-2-2-3',
+  '5-4-1': '5-4-1',
+  '5-3-2': '5-3-2',
+  '5-2-3': '5-2-3',
   // Common API-Football formations that need mapping
   '4-5-1': '4-1-4-1',
   '3-1-4-2': '3-5-2',
-  '4-3-1-2': '4-3-2-1',
+  '4-3-1-2': '4-1-2-1-2',
   '4-1-3-2': '4-1-2-1-2',
-  '5-2-3': '3-4-3',
-  '3-4-2-1': '3-4-1-2',
+  '4-4-1-1': '4-4-2',
+  '4-3-2-1': '4-2-3-1',
+  '3-4-1-2': '3-5-2',
+  '3-3-4': '3-2-2-3',
 };
 
 export function resolveFormation(apiFormation, availableFormations) {

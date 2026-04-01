@@ -1,22 +1,38 @@
 import { mapGridToPosition } from './gridPositionMap';
 
-const FORMATION_KEYS = [
-  '4-4-2',
+export const FORMATION_KEYS = [
   '4-3-3',
   '4-2-3-1',
-  '3-5-2',
-  '3-4-3',
+  '4-4-2',
   '4-1-4-1',
-  '4-4-1-1',
-  '4-3-2-1',
-  '5-3-2',
-  '5-4-1',
-  '4-2-4',
-  '3-4-1-2',
   '4-1-2-1-2',
   '4-2-2-2',
-  '3-3-4',
+  '4-2-4',
+  '3-4-3',
+  '3-4-2-1',
+  '3-5-2',
+  '3-2-2-3',
+  '5-4-1',
+  '5-3-2',
+  '5-2-3',
 ];
+
+const FORMATION_ROW_ROLES = {
+  '4-3-3': ['defense', 'midfield', 'attack'],
+  '4-2-3-1': ['defense', 'midfield', 'attackMid', 'attack'],
+  '4-4-2': ['defense', 'midfield', 'attack'],
+  '4-1-4-1': ['defense', 'midfield', 'midfield', 'attack'],
+  '4-1-2-1-2': ['defense', 'midfield', 'midfield', 'attackMid', 'attack'],
+  '4-2-2-2': ['defense', 'midfield', 'attackMid', 'attack'],
+  '4-2-4': ['defense', 'midfield', 'attack'],
+  '3-4-3': ['defense', 'midfield', 'attack'],
+  '3-4-2-1': ['defense', 'midfield', 'attackMid', 'attack'],
+  '3-5-2': ['defense', 'midfield', 'attack'],
+  '3-2-2-3': ['defense', 'midfield', 'attackMid', 'attack'],
+  '5-4-1': ['defense', 'midfield', 'attack'],
+  '5-3-2': ['defense', 'midfield', 'attack'],
+  '5-2-3': ['defense', 'midfield', 'attack'],
+};
 
 const ROW_X_MAPS = {
   defense: {
@@ -51,11 +67,15 @@ function parseFormation(formation) {
   return formation.split('-').map(Number);
 }
 
-function getRowRole(index, totalRows) {
+function getDefaultRowRole(index, totalRows) {
   if (index === 0) return 'defense';
   if (index === totalRows - 1) return 'attack';
   if (totalRows >= 3 && index === totalRows - 2) return 'attackMid';
   return 'midfield';
+}
+
+function getRowRole(formation, index, totalRows) {
+  return FORMATION_ROW_ROLES[formation]?.[index] || getDefaultRowRole(index, totalRows);
 }
 
 function getRowY(index, totalRows) {
@@ -82,7 +102,7 @@ function createFormation(formation) {
   const positions = [{ x: 50, y: 92, pos: 'GK' }];
 
   rows.forEach((count, rowIdx) => {
-    const role = getRowRole(rowIdx, rows.length);
+    const role = getRowRole(formation, rowIdx, rows.length);
     const y = Number(getRowY(rowIdx, rows.length).toFixed(1));
     const xs = distributeRow(count, role);
 

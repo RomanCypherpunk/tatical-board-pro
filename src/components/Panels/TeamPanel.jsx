@@ -7,10 +7,10 @@ import {
   Shield,
   Star,
 } from 'lucide-react';
-import FORMATIONS from '../../data/formations';
+import FORMATIONS, { FORMATION_KEYS } from '../../data/formations';
 import SHIRT_PATTERNS from '../../data/shirtPatterns';
 
-const formationKeys = Object.keys(FORMATIONS);
+const formationKeys = FORMATION_KEYS.filter((formation) => FORMATIONS[formation]);
 
 const SELECT_STYLE = {
   backgroundColor: '#101F17',
