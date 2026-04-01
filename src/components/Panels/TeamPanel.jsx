@@ -26,7 +26,7 @@ const OPTION_STYLE = {
 export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <div className="space-y-3 border-b border-white/[0.08] p-3">
+      <div className="space-y-4 border-b border-white/[0.08] p-4">
         <div className="flex items-center gap-2">
           <div
             className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-xs font-bold"
@@ -65,7 +65,7 @@ export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
           />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5">
           <ColorPicker
             label="Primaria"
             value={team.primaryColor}
@@ -97,8 +97,8 @@ export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-[10px] text-txt-secondary">Camisa</label>
-          <div className="flex flex-wrap gap-1.5">
+          <label className="mb-1.5 block text-[10px] font-medium text-txt-secondary">Camisa</label>
+          <div className="flex flex-wrap gap-2">
             {SHIRT_PATTERNS.map(({ key, label }) => (
               <PatternSwatch
                 key={key}
@@ -122,14 +122,14 @@ export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
 
         <button
           onClick={() => dispatch({ type: 'SET_UI', updates: { showLiveSearch: teamId } })}
-          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-accent/15 py-2 text-xs font-semibold text-accent transition-colors hover:bg-accent/25"
+          className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-accent/20 bg-accent/[0.12] py-2.5 text-xs font-semibold text-accent transition-all duration-200 hover:bg-accent/[0.2] hover:shadow-[0_0_12px_rgba(20,201,107,0.15)]"
         >
           <Globe size={12} />
           Buscar Elenco no FotMob
         </button>
 
         <div className="flex items-center gap-2">
-          <label className="flex-shrink-0 text-xs text-txt-secondary">Formacao</label>
+          <label className="flex-shrink-0 text-xs font-medium text-txt-secondary">Formacao</label>
           <select
             className="flex-1 appearance-none rounded-lg px-2 py-1.5 text-xs font-semibold outline-none"
             style={SELECT_STYLE}
@@ -151,12 +151,12 @@ export default function TeamPanel({ team, teamId, dispatch, selectedPlayer }) {
         </div>
       </div>
 
-      <div className="scrollbar-thin flex-1 overflow-y-auto p-2">
-        <label className="mb-1 block px-1 font-display text-[11px] uppercase tracking-[0.16em] text-txt-secondary">
+      <div className="scrollbar-thin flex-1 overflow-y-auto p-2.5">
+        <label className="mb-1.5 block px-1 font-display text-[11px] uppercase tracking-[0.16em] text-txt-secondary">
           Jogadores ({team.players.length})
         </label>
 
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-1">
           {team.players.map((player, index) => (
             <PlayerRow
               key={player.id}
@@ -235,9 +235,9 @@ function PlayerRow({ player, team, teamId, dispatch, isActive, isFirst, isLast }
 
   return (
     <div
-      className="group relative flex items-center gap-1 rounded-xl px-1.5 py-1 transition-all duration-150"
+      className="group relative flex items-center gap-1.5 rounded-xl px-2 py-1.5 transition-all duration-200 hover:bg-white/[0.03]"
       style={{
-        background: isActive ? 'rgba(20, 201, 107, 0.12)' : 'transparent',
+        background: isActive ? 'rgba(20, 201, 107, 0.1)' : undefined,
         borderLeft: isActive ? '2px solid var(--accent)' : '2px solid transparent',
       }}
       onClick={() =>
@@ -255,7 +255,7 @@ function PlayerRow({ player, team, teamId, dispatch, isActive, isFirst, isLast }
       }}
     >
       <div
-        className="flex h-6 w-6 flex-shrink-0 cursor-text items-center justify-center rounded-full text-[10px] font-bold"
+        className="flex h-6 w-6 flex-shrink-0 cursor-text items-center justify-center rounded-full text-[10px] font-bold shadow-sm"
         style={{ background: player.colorOverride || team.primaryColor, color: team.numberColor }}
         onClick={(event) => stopAndEdit(event, 'number')}
         title="Editar numero"
@@ -345,7 +345,7 @@ function PlayerRow({ player, team, teamId, dispatch, isActive, isFirst, isLast }
 
         {showMenu && (
           <div
-            className="absolute right-0 top-6 z-50 flex min-w-[168px] flex-col gap-0.5 rounded-2xl border border-white/10 p-1 shadow-2xl"
+            className="animate-fade-in absolute right-0 top-6 z-50 flex min-w-[168px] flex-col gap-0.5 rounded-xl border border-white/[0.1] p-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
             style={{ backgroundColor: '#101F17' }}
             onClick={(event) => event.stopPropagation()}
           >
@@ -430,7 +430,7 @@ function OptionBtn({ icon, label, active, disabled, onClick }) {
 }
 
 function PatternSwatch({ patternKey, label, primary, secondary, selected, onClick }) {
-  const size = 20;
+  const size = 24;
   const radius = size / 2;
 
   const getPattern = () => {
@@ -528,7 +528,7 @@ function PatternSwatch({ patternKey, label, primary, secondary, selected, onClic
     <button
       onClick={onClick}
       title={label}
-      className="flex-shrink-0 focus:outline-none"
+      className="flex-shrink-0 transition-transform duration-200 hover:scale-110 focus:outline-none"
       style={{
         borderRadius: '50%',
         outline: selected ? '2px solid #14C96B' : '2px solid transparent',
@@ -556,14 +556,16 @@ function PatternSwatch({ patternKey, label, primary, secondary, selected, onClic
 
 function ColorPicker({ label, value, onChange }) {
   return (
-    <div className="flex flex-col items-center gap-0.5">
-      <input
-        type="color"
-        className="h-7 w-7 cursor-pointer rounded"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      />
-      <span className="text-[9px] text-txt-secondary">{label}</span>
+    <div className="flex flex-col items-center gap-1">
+      <div className="rounded-lg border border-white/[0.08] p-0.5">
+        <input
+          type="color"
+          className="h-8 w-8 cursor-pointer rounded"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      </div>
+      <span className="text-[10px] font-medium text-txt-secondary">{label}</span>
     </div>
   );
 }

@@ -90,12 +90,12 @@ export default function PlayerEditorModal({ player, team, teamId, dispatch, onCl
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center animate-fade-in"
-      style={{ background: 'rgba(0,0,0,0.62)', backdropFilter: 'blur(6px)' }}
+      style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(10px)' }}
       onClick={onClose}
     >
       <div
-        className="glass-stronger w-[460px] max-w-[94vw] rounded-3xl p-5"
-        style={{ boxShadow: '0 18px 50px rgba(0,0,0,0.45)' }}
+        className="glass-stronger w-[460px] max-w-[94vw] rounded-3xl border-t border-accent/[0.08] p-6"
+        style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.5)' }}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="scrollbar-thin max-h-[82vh] overflow-y-auto pr-1">
@@ -111,7 +111,7 @@ export default function PlayerEditorModal({ player, team, teamId, dispatch, onCl
 
             <button
               onClick={onClose}
-              className="cursor-pointer rounded-lg p-1 text-txt-secondary transition-colors hover:bg-white/10"
+              className="cursor-pointer rounded-xl p-1.5 text-txt-secondary transition-all duration-200 hover:bg-white/[0.08] hover:text-txt-primary"
             >
               <X size={16} />
             </button>
@@ -127,7 +127,7 @@ export default function PlayerEditorModal({ player, team, teamId, dispatch, onCl
 
             <div className="min-w-0 flex-1">
               <input
-                className="mb-1 w-full rounded-xl bg-white/5 px-3 py-2 text-sm text-txt-primary outline-none focus:ring-1 focus:ring-accent"
+                className="mb-1 w-full rounded-xl border border-white/[0.06] bg-white/[0.05] px-3 py-2 text-sm text-txt-primary outline-none transition-colors duration-200 focus:border-accent/40 focus:bg-white/[0.08]"
                 value={player.name}
                 placeholder="Nome completo"
                 onChange={(event) => update({ name: event.target.value })}
@@ -136,7 +136,7 @@ export default function PlayerEditorModal({ player, team, teamId, dispatch, onCl
               <div className="flex gap-2">
                 <input
                   type="number"
-                  className="w-20 rounded-xl bg-white/5 px-2 py-1.5 text-xs text-txt-primary outline-none focus:ring-1 focus:ring-accent"
+                  className="w-20 rounded-xl border border-white/[0.06] bg-white/[0.05] px-2 py-1.5 text-xs text-txt-primary outline-none transition-colors duration-200 focus:border-accent/40 focus:bg-white/[0.08]"
                   value={player.number}
                   min={1}
                   max={99}
@@ -146,7 +146,7 @@ export default function PlayerEditorModal({ player, team, teamId, dispatch, onCl
                 />
 
                 <select
-                  className="flex-1 cursor-pointer appearance-none rounded-xl bg-white/5 px-2 py-1.5 pr-6 text-xs text-txt-primary outline-none"
+                  className="flex-1 cursor-pointer appearance-none rounded-xl border border-white/[0.06] bg-white/[0.05] px-2 py-1.5 pr-6 text-xs text-txt-primary outline-none transition-colors duration-200 focus:border-accent/40"
                   value={player.position}
                   onChange={(event) => update({ position: event.target.value })}
                 >
@@ -160,7 +160,7 @@ export default function PlayerEditorModal({ player, team, teamId, dispatch, onCl
             </div>
           </div>
 
-          <div className="mb-4 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+          <div className="mb-4 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
             <div className="mb-2 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <UserRound size={14} className="text-accent" />
@@ -263,7 +263,7 @@ export default function PlayerEditorModal({ player, team, teamId, dispatch, onCl
               Instrucao tatica
             </label>
             <textarea
-              className="w-full resize-none rounded-2xl bg-white/5 px-3 py-2 text-xs text-txt-primary outline-none focus:ring-1 focus:ring-accent"
+              className="w-full resize-none rounded-2xl border border-white/[0.06] bg-white/[0.05] px-3 py-2 text-xs text-txt-primary outline-none transition-colors duration-200 focus:border-accent/40 focus:bg-white/[0.08]"
               rows={2}
               placeholder="Ex: Pressionar a saida, atacar o meio, fechar a segunda trave..."
               value={player.instruction || ''}
@@ -271,7 +271,7 @@ export default function PlayerEditorModal({ player, team, teamId, dispatch, onCl
             />
           </div>
 
-          <div className="mb-4 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+          <div className="mb-4 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
             <div className="mb-2 flex items-center gap-2">
               <Camera size={14} className="text-accent" />
               <div>
@@ -284,7 +284,7 @@ export default function PlayerEditorModal({ player, team, teamId, dispatch, onCl
 
             <div className="flex gap-2">
               <input
-                className="flex-1 rounded-xl bg-white/5 px-3 py-2 text-xs text-txt-primary outline-none focus:ring-1 focus:ring-accent"
+                className="flex-1 rounded-xl border border-white/[0.06] bg-white/[0.05] px-3 py-2 text-xs text-txt-primary outline-none transition-colors duration-200 focus:border-accent/40 focus:bg-white/[0.08]"
                 value={photoInput}
                 placeholder="Ex: 887448 ou https://www.fotmob.com/players/887448/..."
                 onChange={(event) => setPhotoInput(event.target.value)}
@@ -354,7 +354,7 @@ export default function PlayerEditorModal({ player, team, teamId, dispatch, onCl
             </div>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-3 rounded-xl border border-white/[0.05] bg-white/[0.02] p-3">
             <label className="flex cursor-pointer items-center gap-2">
               <input
                 type="checkbox"

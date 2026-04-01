@@ -134,15 +134,15 @@ export default function App() {
 
       <div className="flex flex-1 overflow-hidden">
         {!ui.pitchFullscreen && ui.showLeftPanel && (
-          <div className="glass z-10 flex w-64 flex-shrink-0 flex-col overflow-hidden animate-fade-in border-r border-white/[0.08]">
-            <div className="flex items-center justify-between border-b border-white/[0.08] px-3 py-2">
-              <span className="text-xs font-bold tracking-wider">
-                <span style={{ color: teams.home.primaryColor }}>•</span>{' '}
+          <div className="glass animate-slide-in-left z-10 flex w-64 flex-shrink-0 flex-col overflow-hidden border-r border-white/[0.08]">
+            <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-2.5">
+              <span className="flex items-center gap-2 text-xs font-bold tracking-wider">
+                <span className="inline-block h-2 w-2 rounded-full" style={{ background: teams.home.primaryColor, boxShadow: `0 0 6px ${teams.home.primaryColor}44` }} />
                 <span className="text-txt-primary">{teams.home.name}</span>
               </span>
               <button
                 onClick={() => dispatch({ type: 'SET_UI', updates: { showLeftPanel: false } })}
-                className="cursor-pointer rounded p-1 text-txt-secondary transition-colors hover:bg-white/10"
+                className="cursor-pointer rounded-lg p-1 text-txt-secondary transition-all duration-200 hover:bg-white/[0.08] hover:text-txt-primary"
               >
                 <ChevronLeft size={14} />
               </button>
@@ -158,10 +158,10 @@ export default function App() {
 
         <div className="relative flex flex-1 flex-col overflow-hidden">
           {!ui.pitchFullscreen && !ui.showLeftPanel && (
-            <div className="absolute left-1 top-1/2 z-20 -translate-y-1/2">
+            <div className="absolute left-1.5 top-1/2 z-20 -translate-y-1/2">
               <button
                 onClick={() => dispatch({ type: 'SET_UI', updates: { showLeftPanel: true } })}
-                className="glass cursor-pointer rounded-lg p-1.5 text-txt-secondary transition-colors hover:bg-white/10"
+                className="glass cursor-pointer rounded-xl p-2 text-txt-secondary shadow-lg transition-all duration-200 hover:bg-white/[0.08] hover:text-txt-primary"
               >
                 <ChevronRight size={14} />
               </button>
@@ -169,10 +169,10 @@ export default function App() {
           )}
 
           {!ui.pitchFullscreen && !ui.showRightPanel && ui.showAwayTeam && (
-            <div className="absolute right-1 top-1/2 z-20 -translate-y-1/2">
+            <div className="absolute right-1.5 top-1/2 z-20 -translate-y-1/2">
               <button
                 onClick={() => dispatch({ type: 'SET_UI', updates: { showRightPanel: true } })}
-                className="glass cursor-pointer rounded-lg p-1.5 text-txt-secondary transition-colors hover:bg-white/10"
+                className="glass cursor-pointer rounded-xl p-2 text-txt-secondary shadow-lg transition-all duration-200 hover:bg-white/[0.08] hover:text-txt-primary"
               >
                 <ChevronLeft size={14} />
               </button>
@@ -185,7 +185,7 @@ export default function App() {
             <div className="pointer-events-none absolute right-4 top-4 z-30">
               <button
                 onClick={handleTogglePitchFullscreen}
-                className="pointer-events-auto glass flex cursor-pointer items-center gap-1.5 rounded-xl px-3 py-2 text-xs text-txt-primary transition-colors hover:bg-white/10"
+                className="pointer-events-auto glass flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-medium text-txt-primary shadow-lg transition-all duration-200 hover:bg-white/[0.08]"
               >
                 <Minimize2 size={14} />
                 Sair da tela cheia
@@ -203,17 +203,17 @@ export default function App() {
         </div>
 
         {!ui.pitchFullscreen && ui.showAwayTeam && ui.showRightPanel && (
-          <div className="glass z-10 flex w-64 flex-shrink-0 flex-col overflow-hidden animate-fade-in border-l border-white/[0.08]">
-            <div className="flex items-center justify-between border-b border-white/[0.08] px-3 py-2">
+          <div className="glass animate-slide-in-right z-10 flex w-64 flex-shrink-0 flex-col overflow-hidden border-l border-white/[0.08]">
+            <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-2.5">
               <button
                 onClick={() => dispatch({ type: 'SET_UI', updates: { showRightPanel: false } })}
-                className="cursor-pointer rounded p-1 text-txt-secondary transition-colors hover:bg-white/10"
+                className="cursor-pointer rounded-lg p-1 text-txt-secondary transition-all duration-200 hover:bg-white/[0.08] hover:text-txt-primary"
               >
                 <ChevronRight size={14} />
               </button>
-              <span className="text-xs font-bold tracking-wider">
-                <span className="text-txt-primary">{teams.away.name}</span>{' '}
-                <span style={{ color: teams.away.primaryColor }}>•</span>
+              <span className="flex items-center gap-2 text-xs font-bold tracking-wider">
+                <span className="text-txt-primary">{teams.away.name}</span>
+                <span className="inline-block h-2 w-2 rounded-full" style={{ background: teams.away.primaryColor, boxShadow: `0 0 6px ${teams.away.primaryColor}44` }} />
               </span>
             </div>
             <TeamPanel

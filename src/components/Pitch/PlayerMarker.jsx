@@ -324,6 +324,12 @@ export default function PlayerMarker({
       }}
       aria-label={`${player.name} - ${player.position}`}
     >
+      <defs>
+        <filter id={`shadow-${teamId}-${player.id}`} x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="1" dy="2" stdDeviation="3.5" floodColor="#000" floodOpacity="0.35" />
+        </filter>
+      </defs>
+
       {!player.colorOverride && !showPhoto && (
         <InlinePatternDefs
           patternKey={team.pattern}
@@ -344,8 +350,6 @@ export default function PlayerMarker({
         </defs>
       )}
 
-      <circle cx={cx + 2} cy={cy + 3} r={markerRadius} fill="rgba(0,0,0,0.35)" />
-
       {isSelected && (
         <circle cx={cx} cy={cy} r={markerRadius + 6} fill="none" stroke="rgba(20,201,107,0.72)" strokeWidth="2.5">
           <animate attributeName="r" values={`${markerRadius + 4};${markerRadius + 10};${markerRadius + 4}`} dur="1.2s" repeatCount="indefinite" />
@@ -353,7 +357,7 @@ export default function PlayerMarker({
         </circle>
       )}
 
-      <circle cx={cx} cy={cy} r={markerRadius} fill={showPhoto ? '#08120D' : fillColor} stroke="rgba(255,255,255,0.25)" strokeWidth="1.5" />
+      <circle cx={cx} cy={cy} r={markerRadius} fill={showPhoto ? '#08120D' : fillColor} stroke="rgba(255,255,255,0.3)" strokeWidth="2" filter={`url(#shadow-${teamId}-${player.id})`} />
 
       {showPhoto && (
         <image
@@ -424,8 +428,8 @@ export default function PlayerMarker({
             cy={cy - markerRadius * 0.72}
             r={markerRadius / 3}
             fill="#FFD700"
-            stroke="rgba(0,0,0,0.3)"
-            strokeWidth="1"
+            stroke="rgba(0,0,0,0.35)"
+            strokeWidth="1.2"
           />
           <text
             x={cx + markerRadius * 0.72}
@@ -450,9 +454,11 @@ export default function PlayerMarker({
             y={badgeY - badgeHeight / 2}
             width={badgeWidth}
             height={badgeHeight}
-            rx={4}
+            rx={6}
             fill={team.primaryColor}
             opacity={0.94}
+            stroke="rgba(0,0,0,0.15)"
+            strokeWidth="0.5"
           />
           <text
             x={badgeX}

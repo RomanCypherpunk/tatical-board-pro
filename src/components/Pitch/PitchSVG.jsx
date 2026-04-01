@@ -44,6 +44,12 @@ export default function PitchSVG({ theme }) {
 
   return (
     <g>
+      <defs>
+        <radialGradient id="pitch-depth-glow" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.03)" />
+          <stop offset="100%" stopColor="rgba(0,0,0,0)" />
+        </radialGradient>
+      </defs>
       <rect x="0" y="0" width={PITCH_W} height={PITCH_H} fill={t.field} rx="18" />
 
       {t.stripe &&
@@ -58,6 +64,7 @@ export default function PitchSVG({ theme }) {
           />
         ))}
 
+      <rect x={FL} y={FT} width={FW} height={FH} fill="url(#pitch-depth-glow)" rx="2" />
       <rect x={FL} y={FT} width={FW} height={FH} fill="none" stroke={t.line} strokeWidth={lineW} rx="2" />
       <line x1={FL} y1={CY} x2={FR} y2={CY} stroke={t.line} strokeWidth={lineW} />
 
