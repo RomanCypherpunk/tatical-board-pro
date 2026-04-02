@@ -200,7 +200,9 @@ export default function PlayerMarker({
   viewMode,
   pitchOrientation,
   isSelected,
+  isSwapTarget,
   onSelect,
+  onDragMove,
   onDragEnd,
   onOpenEditor,
 }) {
@@ -260,12 +262,14 @@ export default function PlayerMarker({
       const { x, y } = eventToCanonicalPoint(svg, event, pitchOrientation);
       const nextPoint = clampToPitch(x, y, markerRadius);
 
-      setDragPos({
-        x: nextPoint.x,
-        y: nextPoint.y,
-      });
+      setDragPos({ x: nextPoint.x, y: nextPoint.y });
+
+      if (onDragMove) {
+        const { x: px, y: py } = canonicalToPercent(nextPoint.x, nextPoint.y);
+        onDragMove(px, py);
+      }
     },
-    [dragging, markerRadius, pitchOrientation]
+    [dragging, markerRadius, pitchOrientation, onDragMove]
   );
 
   const handlePointerUp = useCallback(() => {
@@ -354,6 +358,21 @@ export default function PlayerMarker({
         <circle cx={cx} cy={cy} r={markerRadius + 6} fill="none" stroke="rgba(20,201,107,0.72)" strokeWidth="2.5">
           <animate attributeName="r" values={`${markerRadius + 4};${markerRadius + 10};${markerRadius + 4}`} dur="1.2s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0.7;0.2;0.7" dur="1.2s" repeatCount="indefinite" />
+        </circle>
+      )}
+
+      {isSwapTarget && (
+        <circle
+          cx={cx}
+          cy={cy}
+          r={markerRadius + 8}
+          fill="none"
+          stroke="rgba(255,255,255,0.9)"
+          strokeWidth="2.5"
+          strokeDasharray="7 5"
+          style={{ pointerEvents: 'none' }}
+        >
+          <animateTransform attributeName="transform" type="rotate" from={`0 ${cx} ${cy}`} to={`360 ${cx} ${cy}`} dur="1.5s" repeatCount="indefinite" />
         </circle>
       )}
 

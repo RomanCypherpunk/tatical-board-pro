@@ -200,6 +200,26 @@ export default function reducer(state, action) {
       };
     }
 
+    case 'SWAP_PLAYERS': {
+      const { teamId, playerId, targetId } = action;
+      const players = state.teams[teamId].players;
+      const a = players.find((p) => p.id === playerId);
+      const b = players.find((p) => p.id === targetId);
+      if (!a || !b) return state;
+      const newPlayers = players.map((p) => {
+        if (p.id === playerId) return { ...p, x: b.x, y: b.y, position: b.position };
+        if (p.id === targetId) return { ...p, x: a.x, y: a.y, position: a.position };
+        return p;
+      });
+      return {
+        ...state,
+        teams: {
+          ...state.teams,
+          [teamId]: { ...state.teams[teamId], players: newPlayers },
+        },
+      };
+    }
+
     case 'SET_CAPTAIN': {
       // Enforce single captain per team — unset all others, set the target
       const { teamId, playerId } = action;

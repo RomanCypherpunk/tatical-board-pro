@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import PitchSVG from './PitchSVG';
 import PlayerMarker from './PlayerMarker';
 import ArrowSVG from './ArrowSVG';
@@ -17,7 +17,27 @@ import {
  * The main pitch area — composes the SVG field, players, arrows, and shirt patterns.
  * Handles arrow drawing, selection, and deletion.
  */
+const SWAP_THRESHOLD = 8; // percentage units (~50px in SVG space)
+
+function findSwapTarget(dragX, dragY, dragTeamId, dragPlayerId, teams) {
+  const players = teams[dragTeamId]?.players || [];
+  let closest = null;
+  let closestDist = Infinity;
+  players.forEach((p) => {
+    if (p.id === dragPlayerId) return;
+    const dx = p.x - dragX;
+    const dy = p.y - dragY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < SWAP_THRESHOLD && dist < closestDist) {
+      closest = { id: p.id, teamId: dragTeamId };
+      closestDist = dist;
+    }
+  });
+  return closest;
+}
+
 export default function PitchCanvas({ teams, arrows, ui, dispatch, svgRef }) {
+  const [swapTarget, setSwapTarget] = useState(null); // { teamId, id } | null
   const pitchOrientation = ui.pitchOrientation || 'horizontal';
   const { width: viewWidth, height: viewHeight, aspectRatio } = getPitchViewport(pitchOrientation);
   const pitchTransform = getPitchTransform(pitchOrientation);
@@ -158,11 +178,19 @@ export default function PitchCanvas({ teams, arrows, ui, dispatch, svgRef }) {
               viewMode={ui.viewMode}
               pitchOrientation={pitchOrientation}
               isSelected={ui.selectedPlayer?.id === player.id && ui.selectedPlayer?.teamId === 'home'}
+              isSwapTarget={swapTarget?.id === player.id && swapTarget?.teamId === 'home'}
               onSelect={() => selectPlayer('home', player.id)}
               onOpenEditor={() => openEditor('home', player.id)}
-              onDragEnd={(x, y) =>
-                dispatch({ type: 'MOVE_PLAYER', teamId: 'home', playerId: player.id, x, y })
-              }
+              onDragMove={(x, y) => setSwapTarget(findSwapTarget(x, y, 'home', player.id, teams))}
+              onDragEnd={(x, y) => {
+                const target = findSwapTarget(x, y, 'home', player.id, teams);
+                setSwapTarget(null);
+                if (target) {
+                  dispatch({ type: 'SWAP_PLAYERS', teamId: 'home', playerId: player.id, targetId: target.id });
+                } else {
+                  dispatch({ type: 'MOVE_PLAYER', teamId: 'home', playerId: player.id, x, y });
+                }
+              }}
             />
           ))}
 
@@ -177,11 +205,19 @@ export default function PitchCanvas({ teams, arrows, ui, dispatch, svgRef }) {
                 viewMode={ui.viewMode}
                 pitchOrientation={pitchOrientation}
                 isSelected={ui.selectedPlayer?.id === player.id && ui.selectedPlayer?.teamId === 'away'}
+                isSwapTarget={swapTarget?.id === player.id && swapTarget?.teamId === 'away'}
                 onSelect={() => selectPlayer('away', player.id)}
                 onOpenEditor={() => openEditor('away', player.id)}
-                onDragEnd={(x, y) =>
-                  dispatch({ type: 'MOVE_PLAYER', teamId: 'away', playerId: player.id, x, y })
-                }
+                onDragMove={(x, y) => setSwapTarget(findSwapTarget(x, y, 'away', player.id, teams))}
+                onDragEnd={(x, y) => {
+                  const target = findSwapTarget(x, y, 'away', player.id, teams);
+                  setSwapTarget(null);
+                  if (target) {
+                    dispatch({ type: 'SWAP_PLAYERS', teamId: 'away', playerId: player.id, targetId: target.id });
+                  } else {
+                    dispatch({ type: 'MOVE_PLAYER', teamId: 'away', playerId: player.id, x, y });
+                  }
+                }}
               />
             ))}
         </svg>
