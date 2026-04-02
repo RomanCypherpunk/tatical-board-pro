@@ -84,7 +84,25 @@ function orderPlayersForFormation(players, formation) {
     ? players.map((player, index) => ({ ...player, __originalIndex: index }))
     : [];
 
-  return slots.map((slot) => {
+  // Pre-calculate best available score per slot so that slots with exact
+  // matches (score = 0) are processed before slots that need approximate
+  // matching. This avoids a greedy slot stealing a perfect-match player
+  // from a later slot (e.g., LW stealing the ST before the ST slot runs).
+  const slotOrder = slots.map((slot, idx) => {
+    let best = Number.POSITIVE_INFINITY;
+    for (const candidate of pool) {
+      if (!candidate) continue;
+      const s = getPositionScore(slot.pos, candidate.position);
+      if (s < best) best = s;
+    }
+    return { idx, best };
+  });
+  slotOrder.sort((a, b) => a.best - b.best || a.idx - b.idx);
+
+  const result = new Array(slots.length).fill(null);
+
+  for (const { idx } of slotOrder) {
+    const slot = slots[idx];
     let bestPoolIndex = -1;
     let bestScore = Number.POSITIVE_INFINITY;
 
@@ -109,15 +127,17 @@ function orderPlayersForFormation(players, formation) {
       bestPoolIndex = pool.findIndex(Boolean);
     }
 
-    if (bestPoolIndex === -1) return null;
+    if (bestPoolIndex === -1) continue;
 
     const selected = pool[bestPoolIndex];
     pool[bestPoolIndex] = null;
+    if (!selected) continue;
 
-    if (!selected) return null;
     const { __originalIndex, ...player } = selected;
-    return player;
-  });
+    result[idx] = player;
+  }
+
+  return result;
 }
 
 export default function reducer(state, action) {
