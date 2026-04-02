@@ -1,4 +1,4 @@
-import { mapGridToPosition } from './gridPositionMap';
+import { mapGridToPosition } from './gridPositionMap.js';
 
 export const FORMATION_KEYS = [
   '4-3-3',
