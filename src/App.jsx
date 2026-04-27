@@ -1,5 +1,5 @@
 import { useReducer, useRef, useEffect, useCallback, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Minimize2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Minimize2, Circle } from 'lucide-react';
 
 import reducer from './state/reducer';
 import initialState from './state/initialState';
@@ -176,6 +176,27 @@ export default function App() {
               >
                 <ChevronLeft size={14} />
               </button>
+            </div>
+          )}
+
+          {!ui.pitchFullscreen && (
+            <div className="absolute top-2 left-1/2 z-20 -translate-x-1/2">
+              <div className="glass flex items-center gap-2 rounded-full px-3 py-1.5 shadow-lg">
+                <Circle size={9} className="flex-shrink-0 text-txt-secondary" />
+                <input
+                  type="range"
+                  min="0.5"
+                  max="2"
+                  step="0.05"
+                  value={ui.markerSize ?? 1}
+                  onChange={(e) =>
+                    dispatch({ type: 'SET_UI', updates: { markerSize: Number(e.target.value) } })
+                  }
+                  className="h-1 w-24 cursor-pointer accent-accent"
+                  title="Tamanho das bolinhas"
+                />
+                <Circle size={15} className="flex-shrink-0 text-txt-secondary" />
+              </div>
             </div>
           )}
 

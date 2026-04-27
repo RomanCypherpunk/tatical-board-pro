@@ -71,6 +71,7 @@ export default function initialState() {
       showPlayerEditor: false,
       showLiveSearch: null,
       pitchFullscreen: false,
+      markerSize: 1,
     },
   };
 }

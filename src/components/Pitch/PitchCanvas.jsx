@@ -177,6 +177,7 @@ export default function PitchCanvas({ teams, arrows, ui, dispatch, svgRef }) {
               teamId="home"
               viewMode={ui.viewMode}
               pitchOrientation={pitchOrientation}
+              markerSize={ui.markerSize ?? 1}
               isSelected={ui.selectedPlayer?.id === player.id && ui.selectedPlayer?.teamId === 'home'}
               isSwapTarget={swapTarget?.id === player.id && swapTarget?.teamId === 'home'}
               onSelect={() => selectPlayer('home', player.id)}
@@ -204,6 +205,7 @@ export default function PitchCanvas({ teams, arrows, ui, dispatch, svgRef }) {
                 teamId="away"
                 viewMode={ui.viewMode}
                 pitchOrientation={pitchOrientation}
+                markerSize={ui.markerSize ?? 1}
                 isSelected={ui.selectedPlayer?.id === player.id && ui.selectedPlayer?.teamId === 'away'}
                 isSwapTarget={swapTarget?.id === player.id && swapTarget?.teamId === 'away'}
                 onSelect={() => selectPlayer('away', player.id)}

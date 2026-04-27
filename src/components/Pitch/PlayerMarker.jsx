@@ -205,6 +205,7 @@ export default function PlayerMarker({
   onDragMove,
   onDragEnd,
   onOpenEditor,
+  markerSize,
 }) {
   const { sx, sy } = pctToSvg(player.x, player.y);
   const [dragging, setDragging] = useState(false);
@@ -224,7 +225,7 @@ export default function PlayerMarker({
     pitchOrientation
   );
   const pitchBounds = getDisplayPitchBounds(pitchOrientation);
-  const markerRadius = MARKER_RADIUS;
+  const markerRadius = MARKER_RADIUS * (markerSize ?? 1);
   const scaleFactor = markerRadius / REFERENCE_RADIUS;
   const directionArrowLength = BASE_DIRECTION_ARROW_LENGTH * scaleFactor;
 
